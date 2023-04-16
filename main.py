@@ -3,7 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta
 from influxdb_client import InfluxDBClient
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
@@ -17,34 +17,66 @@ influxdb_token = "MyToken"
 influxdb_org = "MyOrg"
 influxdb_bucket = "glances"
 
-start_date = datetime(2023, 4, 4, 8, 0, 0).strftime("%Y-%m-%dT%H:%M:%SZ")
-stop_date = datetime(2023, 4, 4, 9, 0, 0).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-load_query = f'''
-    from(bucket: "{influxdb_bucket}") 
-        |> range(start: {start_date}, stop: {stop_date}) 
-        |> filter(fn: (r) => r["_measurement"] == "percpu") 
-        |> filter(fn: (r) => r["_field"] == "user") 
-        |> group(columns: ["_measurement"]) 
-        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false) 
-        |> yield(name: "sum")'''
-
-energy_query = f'''
-    from(bucket: "{influxdb_bucket}") 
-        |> range(start: {start_date}, stop: {stop_date}) 
-        |> filter(fn: (r) => r["_measurement"] == "ENERGY_PP0") 
-        |> filter(fn: (r) => r["_field"] == "rapl:::PP0_ENERGY:PACKAGE0(J)" or r["_field"] == "rapl:::PP0_ENERGY:PACKAGE1(J)") 
-        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false) 
-        |> group(columns: ["_measurement"]) 
-        |> yield(name: "mean")'''
-
+log_file = "stress.timestamps"
 degree = 2
 
-def query_influxdb(query):
+load_query = '''
+    from(bucket: "{influxdb_bucket}") 
+        |> range(start: {start_date}, stop: {stop_date}) 
+        |> filter(fn: (r) => r["_measurement"] == "percpu")
+        |> filter(fn: (r) => r["_field"] == "user" )
+        |> group(columns: ["_measurement"])  
+        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
+        |> yield(name: "sum")'''
+
+energy_query = '''
+    from(bucket: "{influxdb_bucket}") 
+        |> range(start: {start_date}, stop: {stop_date}) 
+        |> filter(fn: (r) => r["_measurement"] == "ENERGY_PP0")
+        |> filter(fn: (r) => r["_field"] == "rapl:::PP0_ENERGY:PACKAGE0(J)" or r["_field"] == "rapl:::PP0_ENERGY:PACKAGE1(J)")
+        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
+        |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+        |> map(fn: (r) => ({{
+            _time: r._time, 
+            host: r.host, 
+            _measurement: r._measurement, 
+            _field: "total_energy", 
+            _value: r["rapl:::PP0_ENERGY:PACKAGE0(J)"] + r["rapl:::PP0_ENERGY:PACKAGE1(J)"]
+        }}))'''
+
+def parse_timestamps(file_name):
+    with open(file_name, 'r') as f:
+        lines = f.readlines()
+    timestamps = []
+    for i in range(0, len(lines), 2):
+        start_line = lines[i]
+        stop_line = lines[i+1]
+
+        start_str = " ".join(start_line.split(" ")[3:5]).strip()
+        stop_str = " ".join(stop_line.split(" ")[3:5]).strip()
+        print(start_str, stop_str)
+        start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=10)
+        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=10)
+
+        timestamps.append((start, stop))
+    return timestamps
+
+def query_influxdb(query, start_date, stop_date):
     client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
     query_api = client.query_api()
+    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=influxdb_bucket)
     result = query_api.query_data_frame(query)
     return result
+
+def get_experiment_data(start_date, stop_date):
+    load_df = query_influxdb(load_query, start_date, stop_date)
+    energy_df = query_influxdb(energy_query, start_date, stop_date)
+    print(load_df)
+    ec_cpu_df = pd.merge(load_df, energy_df, on="_time", suffixes=("_load", "_energy"))
+    ec_cpu_df = ec_cpu_df[["_time", "_value_load", "_value_energy"]]
+    ec_cpu_df.dropna(inplace=True)
+
+    return ec_cpu_df
 
 def plot_time_series(df, title, xlabel, ylabel):
     plt.figure()
@@ -90,16 +122,17 @@ def plot_poly_regression(model, X, y):
 
 if __name__ == '__main__':
 
-    # Get data from InfluxDB
+    # Get timestamps from log file
+    experiment_dates = parse_timestamps(log_file)
+    
     warnings.simplefilter("ignore", MissingPivotFunction)
-    load_df = query_influxdb(load_query)
-    energy_df = query_influxdb(energy_query)
+    # Get and transform data
+    ec_cpu_df = pd.DataFrame(columns=["_time", "_value_load", "_value_energy"])
+    for start_date, stop_date in experiment_dates:
+        experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"))
+        ec_cpu_df = pd.concat([ec_cpu_df, experiment_data], ignore_index=True)
 
-    # Transform and plot data
-    ec_cpu_df = pd.merge(load_df, energy_df, on="_time", suffixes=("_load", "_energy"))
-    ec_cpu_df = ec_cpu_df[["_time", "_value_load", "_value_energy"]]
-    ec_cpu_df.dropna(inplace=True)
-
+    # Plot data
     plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", "Tiempo (HH:MM)", "Utilización (%) y energía (J)")
 
     # Prepare model data
