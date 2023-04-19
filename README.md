@@ -27,26 +27,24 @@ influxdb_bucket = "your-bucket"
 
 It is assumed that this server stores Glances and RAPL metrics in a proper format.
 
-### Timestamps
-
-To use the tool you must add your test timestamps (UTC) in the following format:
+### Options
 
 ```shell
-<test_name> (<load>) <start | stop>: <timestamp>
+usage: main.py [-h] [-t TIMESTAMPS_FILE] [-r REGRESSION_PLOT_PATH] [-d DATA_PLOT_PATH]
+
+Modeling CPU power consumption from InfluxDB time series.
+
+options:
+  -h, --help            show this help message and exit
+  -t TIMESTAMPS_FILE, --timestamps-file TIMESTAMPS_FILE
+                        File storing time series timestamps. By default is stress.timestamps. Timestamps must be stored in the following format:
+                             <some-text-or-nothing> start: '%Y-%m-%d %H:%M:%S%z'
+                             <some-text-or-nothing> stop: '%Y-%m-%d %H:%M:%S%z'
+                         Example:
+                             Spread_P&L (cores = 0,16) start: 2023-04-18 14:26:01+0000
+                             Spread_P&L (cores = 0,16) stop: 2023-04-18 14:28:01+0000
+  -r REGRESSION_PLOT_PATH, --regression-plot-path REGRESSION_PLOT_PATH
+                        Specifies the path to save the regression plot. By default is 'regression.png'.
+  -d DATA_PLOT_PATH, --data-plot-path DATA_PLOT_PATH
+                        Specifies the path to save the data plot. By default is 'data.png'.
 ```
-
-Another option is to hardcode these timestamps by modifying the code. For example, to hardcode the metrics collection for April 15, 2023 between 15:28:06 and 15:51:30, the following code could be used:
-
-```python
-# Get timestamps from log file
-#experiment_dates = parse_timestamps(log_file)
-
-experiment_dates = [(datetime(2023, 4, 15, 15, 28, 6), datetime(2023, 4, 15, 15, 51, 30))]
-```
-
-
-
-
-
-
-

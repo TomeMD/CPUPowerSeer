@@ -1,3 +1,4 @@
+from my_parser import create_parser
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -17,7 +18,6 @@ influxdb_token = "MyToken"
 influxdb_org = "MyOrg"
 influxdb_bucket = "glances"
 
-log_file = "stress.timestamps"
 degree = 2
 
 load_query = '''
@@ -52,8 +52,8 @@ def parse_timestamps(file_name):
         start_line = lines[i]
         stop_line = lines[i+1]
 
-        start_str = " ".join(start_line.split(" ")[3:5]).strip()
-        stop_str = " ".join(stop_line.split(" ")[3:5]).strip()
+        start_str = " ".join(start_line.split(" ")[-2:]).strip()
+        stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
         print(start_str, stop_str)
         start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=10)
         stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=10)
@@ -78,7 +78,7 @@ def get_experiment_data(start_date, stop_date):
 
     return ec_cpu_df
 
-def plot_time_series(df, title, xlabel, ylabel):
+def plot_time_series(df, title, xlabel, ylabel, path):
     plt.figure()
     sns.lineplot(x=df["_time"],y=df["_value_load"], label="Utilización de CPU")
     sns.lineplot(x=df["_time"],y=df["_value_energy"], label="Consumo energético")
@@ -93,7 +93,8 @@ def plot_time_series(df, title, xlabel, ylabel):
     plt.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.show(block=False)
+    plt.savefig(path)
+    #plt.show(block=False)
 
 def show_model_performance(name, expected, predicted):
     print(f"Modelo: {name}")
@@ -121,9 +122,16 @@ def plot_poly_regression(model, X, y):
     return eq
 
 if __name__ == '__main__':
+    
+    parser = create_parser()
+    args = parser.parse_args()
+
+    timestamps_file = args.timestamps_file
+    regression_plot_path = args.regression_plot_path
+    data_plot_path = args.data_plot_path
 
     # Get timestamps from log file
-    experiment_dates = parse_timestamps(log_file)
+    experiment_dates = parse_timestamps(timestamps_file)
     
     warnings.simplefilter("ignore", MissingPivotFunction)
     # Get and transform data
@@ -133,7 +141,7 @@ if __name__ == '__main__':
         ec_cpu_df = pd.concat([ec_cpu_df, experiment_data], ignore_index=True)
 
     # Plot data
-    plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", "Tiempo (HH:MM)", "Utilización (%) y energía (J)")
+    plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", "Tiempo (HH:MM)", "Utilización (%) y energía (J)", data_plot_path)
 
     # Prepare model data
     X = ec_cpu_df["_value_load"].values.reshape(-1, 1)
@@ -167,4 +175,6 @@ if __name__ == '__main__':
     plt.xlabel("Utilización de CPU")
     plt.ylabel("Consumo energético")
     plt.legend()
-    plt.show()
+    plt.tight_layout()
+    plt.savefig(regression_plot_path)
+    #plt.show()
