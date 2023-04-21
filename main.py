@@ -25,6 +25,7 @@ load_query = '''
         |> range(start: {start_date}, stop: {stop_date}) 
         |> filter(fn: (r) => r["_measurement"] == "percpu")
         |> filter(fn: (r) => r["_field"] == "user" )
+        |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)
         |> group(columns: ["_measurement"])  
         |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
         |> yield(name: "sum")'''

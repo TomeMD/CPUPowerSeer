@@ -7,8 +7,8 @@ def create_parser():
     parser.add_argument(
         "-t",
         "--timestamps-file",
-        default="stress.timestamps",
-        help="File storing time series timestamps. By default is stress.timestamps. Timestamps must be stored in the following format:\n \
+        default="log/stress.timestamps",
+        help="File storing time series timestamps. By default is log/stress.timestamps. Timestamps must be stored in the following format:\n \
     <some-text-or-nothing> start: '%%Y-%%m-%%d %%H:%%M:%%S%%z'\n \
     <some-text-or-nothing> stop: '%%Y-%%m-%%d %%H:%%M:%%S%%z' \n \
 Example:\n \
@@ -19,15 +19,15 @@ Example:\n \
     parser.add_argument(
         "-r",
         "--regression-plot-path",
-        default="regression.png",
-        help="Specifies the path to save the regression plot. By default is 'regression.png'.",
+        default="img/regression.png",
+        help="Specifies the path to save the regression plot. By default is 'img/regression.png'.",
     )
 
     parser.add_argument(
         "-d",
         "--data-plot-path",
-        default="data.png",
-        help="Specifies the path to save the data plot. By default is 'data.png'.",
+        default="img/data.png",
+        help="Specifies the path to save the data plot. By default is 'img/data.png'.",
     )
 
     return parser
