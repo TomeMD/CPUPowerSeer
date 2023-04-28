@@ -33,8 +33,8 @@ load_query = '''
 energy_query = '''
     from(bucket: "{influxdb_bucket}") 
         |> range(start: {start_date}, stop: {stop_date}) 
-        |> filter(fn: (r) => r["_measurement"] == "ENERGY_PP0")
-        |> filter(fn: (r) => r["_field"] == "rapl:::PP0_ENERGY:PACKAGE0(J)" or r["_field"] == "rapl:::PP0_ENERGY:PACKAGE1(J)")
+        |> filter(fn: (r) => r["_measurement"] == "ENERGY_PACKAGE")
+        |> filter(fn: (r) => r["_field"] == "rapl:::PACKAGE_ENERGY:PACKAGE0(J)" or r["_field"] == "rapl:::PACKAGE_ENERGY:PACKAGE1(J)")
         |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
         |> map(fn: (r) => ({{
@@ -42,7 +42,7 @@ energy_query = '''
             host: r.host, 
             _measurement: r._measurement, 
             _field: "total_energy", 
-            _value: r["rapl:::PP0_ENERGY:PACKAGE0(J)"] + r["rapl:::PP0_ENERGY:PACKAGE1(J)"]
+            _value: r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] + r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"]
         }}))'''
 
 def parse_timestamps(file_name):
@@ -56,8 +56,8 @@ def parse_timestamps(file_name):
         start_str = " ".join(start_line.split(" ")[-2:]).strip()
         stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
         print(start_str, stop_str)
-        start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=10)
-        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=10)
+        start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
+        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') #- timedelta(seconds=5)
 
         timestamps.append((start, stop))
     return timestamps
@@ -69,11 +69,22 @@ def query_influxdb(query, start_date, stop_date):
     result = query_api.query_data_frame(query)
     return result
 
+def remove_outliers(df, column):
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    df_filtered = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+    
+    return df_filtered
+
 def get_experiment_data(start_date, stop_date):
     load_df = query_influxdb(load_query, start_date, stop_date)
     energy_df = query_influxdb(energy_query, start_date, stop_date)
-    print(load_df)
-    ec_cpu_df = pd.merge(load_df, energy_df, on="_time", suffixes=("_load", "_energy"))
+    load_df_filtered = remove_outliers(load_df, "_value")
+    energy_df_filtered = remove_outliers(energy_df, "_value")
+    ec_cpu_df = pd.merge(load_df_filtered, energy_df_filtered, on="_time", suffixes=("_load", "_energy"))
     ec_cpu_df = ec_cpu_df[["_time", "_value_load", "_value_energy"]]
     ec_cpu_df.dropna(inplace=True)
 
