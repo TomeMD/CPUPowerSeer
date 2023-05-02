@@ -42,7 +42,8 @@ energy_query = '''
             host: r.host, 
             _measurement: r._measurement, 
             _field: "total_energy", 
-            _value: r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] + r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"]
+            _value: (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] else 0.0)
+                 + (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] else 0.0)
         }}))'''
 
 def parse_timestamps(file_name):
