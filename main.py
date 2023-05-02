@@ -52,7 +52,6 @@ def parse_timestamps(file_name):
     for i in range(0, len(lines), 2):
         start_line = lines[i]
         stop_line = lines[i+1]
-
         start_str = " ".join(start_line.split(" ")[-2:]).strip()
         stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
         print(start_str, stop_str)
@@ -90,23 +89,41 @@ def get_experiment_data(start_date, stop_date):
 
     return ec_cpu_df
 
-def plot_time_series(df, title, xlabel, ylabel, path):
+def plot_time_series(df, title, xlabel, ylabel1, ylabel2, path):
     plt.figure()
-    sns.lineplot(x=df["_time"],y=df["_value_load"], label="Utilización de CPU")
-    sns.lineplot(x=df["_time"],y=df["_value_energy"], label="Consumo energético")
+    fig, ax1 = plt.subplots()
+    ax2 = ax1.twinx()
 
+    # Set CPU Utilization axis
+    sns.lineplot(x=df["_time"], y=df["_value_load"], label="Utilización de CPU", ax=ax1)
+    ax1.set_xlabel(xlabel)
+    ax1.set_ylabel(ylabel1)
+    ax1.tick_params(axis='y')
+    for label in ax1.get_xticklabels():
+        label.set_rotation(45)
+    
+    # Set Energy Consumption axis
+    sns.lineplot(x=df["_time"], y=df["_value_energy"], label="Consumo energético", ax=ax2, color='tab:orange')
+    ax2.set_ylabel(ylabel2)
+    ax2.tick_params(axis='y')
+    ax2.set_ylim(0, 1000)
+
+    # Set time axis
     plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    ax = plt.gca()
-    ax.xaxis.set_major_locator(MinuteLocator(interval=10))
-    ax.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+    ax1.xaxis.set_major_locator(MinuteLocator(interval=10))
+    ax1.xaxis.set_major_formatter(DateFormatter('%H:%M'))
 
-    plt.legend()
-    plt.xticks(rotation=45)
+    # Set legend
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    lines = lines1 + lines2
+    labels = labels1 + labels2
+    ax1.legend(lines, labels, loc='upper left')
+    ax2.get_legend().remove()
+
     plt.tight_layout()
     plt.savefig(path)
-    #plt.show(block=False)
+
 
 def show_model_performance(name, expected, predicted):
     print(f"Modelo: {name}")
@@ -153,7 +170,8 @@ if __name__ == '__main__':
         ec_cpu_df = pd.concat([ec_cpu_df, experiment_data], ignore_index=True)
 
     # Plot data
-    plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", "Tiempo (HH:MM)", "Utilización (%) y energía (J)", data_plot_path)
+    plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", 
+                     "Tiempo (HH:MM)", "Utilización de CPU", "Consumo energético", data_plot_path)
 
     # Prepare model data
     X = ec_cpu_df["_value_load"].values.reshape(-1, 1)
