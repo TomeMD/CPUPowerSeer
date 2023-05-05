@@ -56,8 +56,13 @@ def parse_timestamps(file_name):
         start_str = " ".join(start_line.split(" ")[-2:]).strip()
         stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
         print(start_str, stop_str)
-        start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
-        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') #- timedelta(seconds=5)
+        if (start_line.split(" ")[1] == "STRESS-TEST"): # Stress test CPU consumption
+            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
+        elif  (start_line.split(" ")[1] == "NPB"):
+            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') #+ timedelta(seconds=20)
+        else: 
+            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
+        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
 
         timestamps.append((start, stop))
     return timestamps
@@ -73,8 +78,8 @@ def remove_outliers(df, column):
     Q1 = df[column].quantile(0.25)
     Q3 = df[column].quantile(0.75)
     IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
+    lower_bound = Q1 - 0.1 * IQR
+    upper_bound = Q3 + 0.1 * IQR
     df_filtered = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
     
     return df_filtered
@@ -147,7 +152,7 @@ def plot_poly_regression(model, X, y):
     b = model.intercept_ 
     eq = f"y = {b[0]:.4f}"
     for i, c in enumerate(m[0][1:]):
-        eq += f" + {c:.4f}x^{i+1}"
+        eq += f" + {c:.8f}x^{i+1}"
     eq+= "\n"
     return eq
 
@@ -156,56 +161,76 @@ if __name__ == '__main__':
     parser = create_parser()
     args = parser.parse_args()
 
-    timestamps_file = args.timestamps_file
+    f_train_timestamps = args.train_timestamps
+    f_actual_values = args.actual_values
+    model_name = args.name
     regression_plot_path = args.regression_plot_path
     data_plot_path = args.data_plot_path
 
-    # Get timestamps from log file
-    experiment_dates = parse_timestamps(timestamps_file)
-    
     warnings.simplefilter("ignore", MissingPivotFunction)
-    # Get and transform data
-    ec_cpu_df = pd.DataFrame(columns=["_time", "_value_load", "_value_energy"])
+
+    # Get train data
+    experiment_dates = parse_timestamps(f_train_timestamps) # Get timestamps from log file
+    train_df = pd.DataFrame(columns=["_time", "_value_load", "_value_energy"])
     for start_date, stop_date in experiment_dates:
         experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"))
-        ec_cpu_df = pd.concat([ec_cpu_df, experiment_data], ignore_index=True)
+        train_df = pd.concat([train_df, experiment_data], ignore_index=True)
 
-    # Plot data
-    plot_time_series(ec_cpu_df, "Utilización de CPU y consumo energético", 
-                     "Tiempo (HH:MM)", "Utilización de CPU", "Consumo energético", data_plot_path)
-
-    # Prepare model data
-    X = ec_cpu_df["_value_load"].values.reshape(-1, 1)
-    y = ec_cpu_df["_value_energy"].values.reshape(-1, 1)
+    # Plot train data
+    plot_time_series(train_df, "Utilización de CPU y consumo energético", 
+                     "Tiempo (HH:MM)", "Utilización de CPU (%)", "Consumo energético (J)", data_plot_path)
+    
+    # Split into train and test data
+    X = train_df["_value_load"].values.reshape(-1, 1)
+    y = train_df["_value_energy"].values.reshape(-1, 1)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
     poly_features = PolynomialFeatures(degree=degree)
     X_poly_train = poly_features.fit_transform(X_train)
     X_poly_test = poly_features.transform(X_test)
 
     # Train models
-    poly_reg = LinearRegression()
     lin_reg = LinearRegression()
-    poly_reg.fit(X_poly_train, y_train)
+    poly_reg = LinearRegression()
     lin_reg.fit(X_train, y_train)
+    poly_reg.fit(X_poly_train, y_train)
 
-    # Test models
-    y_poly_pred = poly_reg.predict(X_poly_test)
     y_pred = lin_reg.predict(X_test)
+    y_poly_pred = poly_reg.predict(X_poly_test)
 
-    # Show models performance
-    show_model_performance("Regresión lineal", y_test, y_pred)
-    show_model_performance("Regresión polinómica", y_test, y_poly_pred)
+    # Get actual values if provided
+    X_actual = y_actual = None
+    if f_actual_values is not None:
+        test_dates = parse_timestamps(f_actual_values)
+        test_df = pd.DataFrame(columns=["_time", "_value_load", "_value_energy"])
+        for start_date, stop_date in test_dates:
+            experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"))
+            test_df = pd.concat([test_df, experiment_data], ignore_index=True)
+        X_actual = test_df["_value_load"].values.reshape(-1, 1)
+        y_actual = test_df["_value_energy"].values.reshape(-1, 1)
 
-    # Plot results
+
+    # Plot model
     plt.figure()
-    plt.scatter(X, y, color="grey", label="Datos")
+    plt.scatter(X_test, y_test, color="grey", label="Datos de test")
+    if (X_actual is not None and y_actual is not None):
+        plt.scatter(X_actual, y_actual, color="green", label="Datos reales")
     title = ""
     title += plot_lin_regression(lin_reg, X_test, y_pred)
     title += plot_poly_regression(poly_reg, X_poly_test, y_poly_pred)
     plt.title(title)
-    plt.xlabel("Utilización de CPU")
-    plt.ylabel("Consumo energético")
+    plt.xlabel("Utilización de CPU (%)")
+    plt.ylabel("Consumo energético (J)")
     plt.legend()
     plt.tight_layout()
     plt.savefig(regression_plot_path)
-    #plt.show()
+
+    # If actual values are provided they are used to test the model
+    if (X_actual is not None and y_actual is not None):
+        X_poly_actual = poly_features.transform(X_actual)
+        y_pred = lin_reg.predict(X_actual)
+        y_poly_pred = poly_reg.predict(X_poly_actual)
+
+    show_model_performance(f"{model_name} (Regresión lineal)", y_actual, y_pred)
+    show_model_performance(f"{model_name} (Regresión polinómica)", y_actual, y_poly_pred)
+
