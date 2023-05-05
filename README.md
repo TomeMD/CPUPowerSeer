@@ -30,19 +30,23 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-t TIMESTAMPS_FILE] [-r REGRESSION_PLOT_PATH] [-d DATA_PLOT_PATH]
+usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_VALUES] [-n NAME] [-r REGRESSION_PLOT_PATH] [-d DATA_PLOT_PATH]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
-  -t TIMESTAMPS_FILE, --timestamps-file TIMESTAMPS_FILE
-                        File storing time series timestamps. By default is log/stress.timestamps. Timestamps must be stored in the following format:
+  -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
+                        File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:
                              <some-text-or-nothing> start: '%Y-%m-%d %H:%M:%S%z'
-                             <some-text-or-nothing> stop: '%Y-%m-%d %H:%M:%S%z'
+                             <some-text-or-nothing> stop: '%Y-%m-%d %H:%M:%S%z' 
                          Example:
                              Spread_P&L (cores = 0,16) start: 2023-04-18 14:26:01+0000
                              Spread_P&L (cores = 0,16) stop: 2023-04-18 14:28:01+0000
+  -a ACTUAL_VALUES, --actual-values ACTUAL_VALUES
+                        File storing time series timestamps from actuel values of load to test model. If not specified train data will be split into train and test data.
+                        Timestamps must be stored in the same format as train timestamps.
+  -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'
   -r REGRESSION_PLOT_PATH, --regression-plot-path REGRESSION_PLOT_PATH
                         Specifies the path to save the regression plot. By default is 'img/regression.png'.
   -d DATA_PLOT_PATH, --data-plot-path DATA_PLOT_PATH
