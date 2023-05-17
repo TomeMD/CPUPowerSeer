@@ -9,18 +9,18 @@ def create_parser():
         "--train-timestamps",
         default="log/stress.timestamps",
         help="File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:\n \
-    <some-text-or-nothing> start: '%%Y-%%m-%%d %%H:%%M:%%S%%z'\n \
-    <some-text-or-nothing> stop: '%%Y-%%m-%%d %%H:%%M:%%S%%z' \n \
+    <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>\n \
+    <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>\n \
 Example:\n \
-    Spread_P&L (cores = 0,16) start: 2023-04-18 14:26:01+0000\n \
-    Spread_P&L (cores = 0,16) stop: 2023-04-18 14:28:01+0000",
+    Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000\n \
+    Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000",
     )
 
     parser.add_argument(
         "-a",
         "--actual-values",
         default=None,
-        help="File storing time series timestamps from actuel values of load to test model. If not specified train data will be split into train and test data.\n\
+        help="File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not specified train data will be split into train and test data.\n\
 Timestamps must be stored in the same format as train timestamps.",
     )
 

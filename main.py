@@ -55,15 +55,13 @@ def parse_timestamps(file_name):
         stop_line = lines[i+1]
         start_str = " ".join(start_line.split(" ")[-2:]).strip()
         stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
-        print(start_str, stop_str)
         if (start_line.split(" ")[1] == "STRESS-TEST"): # Stress test CPU consumption
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
-        elif  (start_line.split(" ")[1] == "NPB"):
-            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') #+ timedelta(seconds=20)
+        elif  (start_line.split(" ")[1] == "REAL-VALUES"):
+            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
         else: 
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
         stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
-
         timestamps.append((start, stop))
     return timestamps
 
@@ -78,8 +76,8 @@ def remove_outliers(df, column):
     Q1 = df[column].quantile(0.25)
     Q3 = df[column].quantile(0.75)
     IQR = Q3 - Q1
-    lower_bound = Q1 - 0.1 * IQR
-    upper_bound = Q3 + 0.1 * IQR
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
     df_filtered = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
     
     return df_filtered
@@ -227,10 +225,11 @@ if __name__ == '__main__':
 
     # If actual values are provided they are used to test the model
     if (X_actual is not None and y_actual is not None):
+        y_test = y_actual
         X_poly_actual = poly_features.transform(X_actual)
         y_pred = lin_reg.predict(X_actual)
         y_poly_pred = poly_reg.predict(X_poly_actual)
 
-    show_model_performance(f"{model_name} (Regresión lineal)", y_actual, y_pred)
-    show_model_performance(f"{model_name} (Regresión polinómica)", y_actual, y_poly_pred)
+    show_model_performance(f"{model_name} (Regresión lineal)", y_test, y_pred)
+    show_model_performance(f"{model_name} (Regresión polinómica)", y_test, y_poly_pred)
 

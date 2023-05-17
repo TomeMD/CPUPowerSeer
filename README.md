@@ -38,13 +38,13 @@ options:
   -h, --help            show this help message and exit
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
                         File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:
-                             <some-text-or-nothing> start: '%Y-%m-%d %H:%M:%S%z'
-                             <some-text-or-nothing> stop: '%Y-%m-%d %H:%M:%S%z' 
+                             <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>
+                             <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>
                          Example:
-                             Spread_P&L (cores = 0,16) start: 2023-04-18 14:26:01+0000
-                             Spread_P&L (cores = 0,16) stop: 2023-04-18 14:28:01+0000
+                             Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000
+                             Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
   -a ACTUAL_VALUES, --actual-values ACTUAL_VALUES
-                        File storing time series timestamps from actuel values of load to test model. If not specified train data will be split into train and test data.
+                        File storing time series timestamps from actual values of load to test model (same format as train timestamps). If not specified train data will be split into train and test data.
                         Timestamps must be stored in the same format as train timestamps.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'
   -r REGRESSION_PLOT_PATH, --regression-plot-path REGRESSION_PLOT_PATH
@@ -52,3 +52,14 @@ options:
   -d DATA_PLOT_PATH, --data-plot-path DATA_PLOT_PATH
                         Specifies the path to save the data plot. By default is 'img/data.png'.
 ```
+
+
+Timestamps files must be stored in the following format:
+```shell
+<EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>
+<EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>
+```
+With the following meaning:
+- `EXP-NAME`: User desired name.
+- `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and REAL-VALUES if it's a period in which test data was obtained.
+- `DATE-START` and `DATE-STOP`: Timestamp of the beginning or end of the experiment in UTC format `%Y-%m-%d %H:%M:%S%z`.
