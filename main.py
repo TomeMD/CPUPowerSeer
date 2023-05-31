@@ -57,7 +57,7 @@ def parse_timestamps(file_name):
         stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
         if (start_line.split(" ")[1] == "STRESS-TEST"): # Stress test CPU consumption
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
-        elif  (start_line.split(" ")[1] == "REAL-VALUES"):
+        elif  (start_line.split(" ")[1] == "CUSTOM"):
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
         else: 
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
