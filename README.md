@@ -1,6 +1,6 @@
-# CPU Utilization VS Power Consumption
+# CPU Power Consumption Modeling
 
-This tool builds a model to predict CPU energy consumption from CPU utilization using InfluxDB time series.
+This tool builds a model to predict CPU energy consumption from CPU utilization and frequency using InfluxDB time series.
 
 ## Requirements
 
@@ -61,5 +61,5 @@ Timestamps files must be stored in the following format:
 ```
 With the following meaning:
 - `EXP-NAME`: User desired name.
-- `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and CUSTOM if it's a diferent period.
+- `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and REAL-VALUES if it's a period in which test data was obtained.
 - `DATE-START` and `DATE-STOP`: Timestamp of the beginning or end of the experiment in UTC format `%Y-%m-%d %H:%M:%S%z`.
