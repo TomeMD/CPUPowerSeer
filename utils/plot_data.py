@@ -38,29 +38,33 @@ def plot_time_series(df, title, xlabel, ylabels, path):
     plt.tight_layout()
     plt.savefig(path)
 
-def plot_model(model, actual_values, X_poly_test, y_poly_pred, idle_consumption, path):
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-
-    ax.scatter(X_poly_test[:, 0], X_poly_test[:, 1], y_poly_pred, color='red', label='Valores predichos')
-    if (actual_values[0] is not None and actual_values[1] is not None):
-        ax.scatter(actual_values[0], actual_values[1], color="green", label="Datos de test (custom)")
-
+def plot_3d_graph(ax, X_poly_test, y_poly_pred):
+    ax.scatter(X_poly_test[:, 1], X_poly_test[:, 2], y_poly_pred, color='red', label='Valores predichos')
     ax.set_xlabel('Utilización de CPU')
     ax.set_ylabel('Frecuencia de CPU')
     ax.set_zlabel('Consumo energético')
     ax.legend()
 
-    title_lines = [
-        f"Polinómica: y = {model.intercept_[0]:.0f}",
-        *(
-            f" + {model.coef_[0][i+1]:.8f}*{name}"
-            for i, name in enumerate(["U_cpu", "F_cpu", "(U_cpu*F_cpu)", "U_cpu^2", "F_cpu^2"])
-        ),
-        f"\nConsumo en reposo: {idle_consumption:.0f} J"
-    ]
-    title = "\n".join(title_lines)
+def plot_2d_graph(ax, X, y, xlabel, ylabel):
+    ax.scatter(X, y, color='red', label='Valores predichos')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend()
 
-    plt.title(title)
+def plot_model(model, actual_values, X_poly_test, y_poly_pred, path):
+    fig = plt.figure(figsize=(18, 6))
+
+    # 3D plot
+    ax1 = fig.add_subplot(131, projection='3d')
+    plot_3d_graph(ax1, X_poly_test, y_poly_pred)
+
+    # 2D plot for CPU utilization
+    ax2 = fig.add_subplot(132)
+    plot_2d_graph(ax2, X_poly_test[:, 1], y_poly_pred, 'Utilización de CPU', 'Consumo energético')
+
+    # 2D plot for CPU frequency
+    ax3 = fig.add_subplot(133)
+    plot_2d_graph(ax3, X_poly_test[:, 2], y_poly_pred, 'Frecuencia de CPU', 'Consumo energético')
+
     plt.tight_layout()
     plt.savefig(path)

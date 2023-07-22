@@ -2,9 +2,7 @@ from utils.my_parser import create_parser
 from utils.process_data import parse_timestamps, get_experiment_data, get_time_series
 from utils.plot_data import plot_time_series, plot_model
 
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import warnings
 from influxdb_client.client.warnings import MissingPivotFunction
 
@@ -13,8 +11,20 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
-def show_model_performance(name, expected, predicted):
+def get_model_equation(model, idle_consumption):
+    eq_lines = [
+        f"y = {model.intercept_[0]:.0f}",
+        *(
+            f" + {model.coef_[0][i+1]:.8f}*{name}"
+            for i, name in enumerate(["U_cpu", "F_cpu", "U_cpu^2", "(U_cpu*F_cpu)", "F_cpu^2"])
+        ),
+        f"\nConsumo en reposo: {idle_consumption:.0f} J"
+    ]
+    return "\n".join(eq_lines)
+
+def show_model_performance(name, equation, expected, predicted):
     print(f"Modelo: {name}")
+    print(f"Ecuación: {equation}")
     print(f"Mean squared error: {mean_squared_error(expected, predicted)}")
     print(f"R2 score: {r2_score(expected, predicted)}")
     print("")
@@ -49,6 +59,7 @@ if __name__ == '__main__':
     y = stress_data["_value_energy"].values.reshape(-1, 1)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+
     poly_features = PolynomialFeatures(degree=2)
     X_poly_train = poly_features.fit_transform(X_train)
     X_poly_test = poly_features.transform(X_test)
@@ -56,6 +67,7 @@ if __name__ == '__main__':
     # Train model
     poly_reg = LinearRegression()
     poly_reg.fit(X_poly_train, y_train)
+    equation = get_model_equation(poly_reg, idle_consumption)
 
     # Get predicted values
     y_poly_pred = poly_reg.predict(X_poly_test)
@@ -71,7 +83,7 @@ if __name__ == '__main__':
         y_actual = test_df["_value_energy"].values.reshape(-1, 1)
 
     # Plot model
-    plot_model(poly_reg, (X_actual, y_actual), X_poly_test, y_poly_pred, idle_consumption, regression_plot_path)
+    plot_model(poly_reg, (X_actual, y_actual), X_poly_test, y_poly_pred, regression_plot_path)
 
     # If actual values are provided they are used to test the model
     if (X_actual is not None and y_actual is not None):
@@ -79,5 +91,5 @@ if __name__ == '__main__':
         X_poly_actual = poly_features.transform(X_actual)
         y_poly_pred = poly_reg.predict(X_poly_actual)
 
-    show_model_performance(f"{model_name} (Regresión polinómica)", y_test, y_poly_pred)
+    show_model_performance(f"{model_name} (Regresión polinómica)", equation, y_test, y_poly_pred)
 
