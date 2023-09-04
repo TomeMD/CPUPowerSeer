@@ -30,7 +30,7 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_VALUES] [-n NAME] [-r REGRESSION_PLOT_PATH] [-d DATA_PLOT_PATH]
+usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_TIMESTAMPS] [-tp TRAIN_DATA_PLOT] [-ap ACTUAL_DATA_PLOT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
@@ -43,14 +43,14 @@ options:
                          Example:
                              Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000
                              Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
-  -a ACTUAL_VALUES, --actual-values ACTUAL_VALUES
-                        File storing time series timestamps from actual values of load to test model (same format as train timestamps). If not specified train data will be split into train and test data.
-                        Timestamps must be stored in the same format as train timestamps.
+  -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
+                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not 
+                                 specified train data will be split into train and test data.
+  -tp TRAIN_DATA_PLOT, --train-data-plot TRAIN_DATA_PLOT
+                        Specifies the path to save the train data time series plot. By default is 'img/train-data.png'.
+  -ap ACTUAL_DATA_PLOT, --actual-data-plot ACTUAL_DATA_PLOT
+                        Specifies the path to save the actual data time series plot. By default is 'img/actual-data.png'.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'
-  -r REGRESSION_PLOT_PATH, --regression-plot-path REGRESSION_PLOT_PATH
-                        Specifies the path to save the regression plot. By default is 'img/regression.png'.
-  -d DATA_PLOT_PATH, --data-plot-path DATA_PLOT_PATH
-                        Specifies the path to save the data plot. By default is 'img/data.png'.
 ```
 
 
