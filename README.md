@@ -7,7 +7,7 @@ This tool builds a model to predict CPU energy consumption from CPU utilization 
 You need to install the following libraries:
 
 ```python
-pip install influxdb-client pandas numpy scikit-learn matplotlib
+pip install influxdb-client pandas numpy scikit-learn matplotlib seaborn
 ```
 
 ## Configuration
