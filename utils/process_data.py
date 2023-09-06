@@ -52,23 +52,23 @@ def parse_timestamps(file_name):
         timestamps.append((start, stop, exp_type))
     return timestamps
 
-def remove_outliers(df, column):
+def remove_outliers(df, column, range):
     Q1 = df[column].quantile(0.25)
     Q3 = df[column].quantile(0.75)
     IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
+    lower_bound = Q1 - range * IQR
+    upper_bound = Q3 + range * IQR
     df_filtered = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
     return df_filtered
 
-def get_experiment_data(start_date, stop_date, exp_type):
+def get_experiment_data(start_date, stop_date, exp_type, range):
     load_query
     load_df = query_influxdb(load_query, start_date, stop_date)
     freq_df = query_influxdb(freq_query, start_date, stop_date)
     energy_df = query_influxdb(energy_query, start_date, stop_date)
-    load_df_filtered = remove_outliers(load_df, "_value")
-    freq_df_filtered = remove_outliers(freq_df, "_value")
-    energy_df_filtered = remove_outliers(energy_df, "_value")
+    load_df_filtered = remove_outliers(load_df, "_value", range)
+    freq_df_filtered = remove_outliers(freq_df, "_value", range)
+    energy_df_filtered = remove_outliers(energy_df, "_value", range)
     ec_cpu_df = pd.merge(load_df_filtered, energy_df_filtered, on="_time", suffixes=("_load", "_energy"))
     ec_cpu_df = pd.merge(ec_cpu_df, freq_df_filtered, on="_time", suffixes=("", "_freq"))
     ec_cpu_df.rename(columns={'_value': '_value_freq'}, inplace=True)
@@ -78,9 +78,9 @@ def get_experiment_data(start_date, stop_date, exp_type):
 
     return ec_cpu_df
 
-def get_time_series(experiment_dates):
+def get_time_series(experiment_dates, range):
     time_series = pd.DataFrame(columns=["_time", "_value_load", "_value_freq", "_value_energy", "exp_type"])
     for start_date, stop_date, exp_type in experiment_dates:
-        experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"), exp_type)
+        experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"), exp_type, range)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series

@@ -16,12 +16,14 @@ if __name__ == '__main__':
     model_name = args.name
     train_data_plot = args.train_data_plot
     actual_data_plot = args.actual_data_plot
+    train_range = 1.5
+    test_range = 1.5  # 0.001
 
     warnings.simplefilter("ignore", MissingPivotFunction)
 
     # Get train data
     experiment_dates = parse_timestamps(f_train_timestamps) # Get timestamps from log file
-    time_series = get_time_series(experiment_dates)
+    time_series = get_time_series(experiment_dates, train_range)
 
     # Plot time series
     plot_time_series(time_series, "Series temporales",
@@ -43,7 +45,7 @@ if __name__ == '__main__':
     X_actual = y_actual = None
     if f_actual_timestamps is not None:
         test_dates = parse_timestamps(f_actual_timestamps)
-        test_time_series = get_time_series(test_dates)
+        test_time_series = get_time_series(test_dates, test_range)
         plot_time_series(test_time_series, "Series temporales",
                          "Tiempo (HH:MM)", ["Utilización de CPU (%)", "Frecuencia de CPU (MHz)", "Consumo energético (J)"], actual_data_plot)
         X1_actual = test_time_series["_value_load"].values.reshape(-1, 1)
