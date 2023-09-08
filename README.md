@@ -30,7 +30,7 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_TIMESTAMPS] [-tp TRAIN_DATA_PLOT] [-ap ACTUAL_DATA_PLOT] [-n NAME]
+usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
@@ -46,10 +46,8 @@ options:
   -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
                         File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not 
                                  specified train data will be split into train and test data.
-  -tp TRAIN_DATA_PLOT, --train-data-plot TRAIN_DATA_PLOT
-                        Specifies the path to save the train data time series plot. By default is 'img/train-data.png'.
-  -ap ACTUAL_DATA_PLOT, --actual-data-plot ACTUAL_DATA_PLOT
-                        Specifies the path to save the actual data time series plot. By default is 'img/actual-data.png'.
+  -o OUTPUT, --output OUTPUT
+                        Directory to save time series plots and results. By default is './out'.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'
 ```
 

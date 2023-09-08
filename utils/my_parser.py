@@ -25,17 +25,10 @@ Example:\n \
     )
 
     parser.add_argument(
-        "-tp",
-        "--train-data-plot",
-        default="img/train-data.png",
-        help="Specifies the path to save the train data time series plot. By default is 'img/train-data.png'.",
-    )
-
-    parser.add_argument(
-        "-ap",
-        "--actual-data-plot",
-        default="img/actual-data.png",
-        help="Specifies the path to save the actual data time series plot. By default is 'img/actual-data.png'.",
+        "-o",
+        "--output",
+        default="out",
+        help="Directory to save time series plots and results. By default is './out'.",
     )
 
     parser.add_argument(

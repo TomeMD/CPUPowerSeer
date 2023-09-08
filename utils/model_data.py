@@ -1,3 +1,4 @@
+from utils import config
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
@@ -45,9 +46,12 @@ class Model:
             self.X_poly_test = self.poly_features.transform(X)
             self.y_test = y
 
-    def show_model_performance(self):
-        print(f"Modelo: {self.name}")
-        print(f"Ecuación: {self.equation}")
-        print(f"Mean squared error: {mean_squared_error(self.y_test, self.y_poly_pred)}")
-        print(f"R2 score: {r2_score(self.y_test, self.y_poly_pred)}")
-        print("")
+    def write_model_performance(self):
+        filename = f'{config.output_dir}/{config.model_name}-results.out'
+        print(f'Writing performance report to {filename}')
+        with open(filename, 'w') as file:
+            file.write(f"Modelo: {self.name}\n")
+            file.write(f"Ecuación: {self.equation}\n")
+            file.write(f"Mean squared error: {mean_squared_error(self.y_test, self.y_poly_pred)}\n")
+            file.write(f"R2 score: {r2_score(self.y_test, self.y_poly_pred)}\n")
+            file.write("\n")

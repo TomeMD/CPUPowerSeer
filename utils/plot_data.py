@@ -1,8 +1,12 @@
+from utils import config
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, MinuteLocator
 
-def plot_time_series(df, title, xlabel, ylabels, path):
+
+def plot_time_series(df, title, xlabel, ylabels, filename):
+    path = f'{config.img_dir}/{filename}'
+    print(f'Saving plot in {path}')
     plt.figure()
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
@@ -51,7 +55,8 @@ def plot_2d_graph(ax, X, y, xlabel, ylabel):
     ax.set_ylabel(ylabel)
     ax.legend()
 
-def plot_model(model, actual_values, X_poly_test, y_poly_pred, path):
+def plot_model(model, actual_values, X_poly_test, y_poly_pred, filename):
+    path = f'{config.img_dir}/{filename}'
     fig = plt.figure(figsize=(18, 6))
 
     # 3D plot
