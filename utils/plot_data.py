@@ -3,6 +3,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, MinuteLocator
 
+def plot_temperature(df, filename):
+    path = f'{config.img_dir}/{filename}'
+    plt.figure()
+    sns.lineplot(x=df["_time"], y=df["_value_temp"])
+    plt.title("Temperatura de la CPU")
+    plt.xlabel("Tiempo (HH:MM)")
+    plt.ylabel("Temperatura ºC")
+    plt.tight_layout()
+    plt.savefig(path)
 
 def plot_time_series(df, title, xlabel, ylabels, filename):
     path = f'{config.img_dir}/{filename}'

@@ -1,7 +1,7 @@
 import utils.config as config
 from utils.my_parser import create_parser
 from utils.process_data import parse_timestamps, get_time_series
-from utils.plot_data import plot_time_series
+from utils.plot_data import plot_time_series, plot_temperature
 from utils.model_data import Model
 
 import numpy as np
@@ -27,6 +27,7 @@ if __name__ == '__main__':
     time_series = get_time_series(experiment_dates, config.train_range)
 
     # Plot time series
+    plot_temperature(time_series, f'{config.model_name}-temperature-data.png')
     plot_time_series(time_series, "Series temporales", "Tiempo (HH:MM)",
                      ["Utilización de CPU (%)", "Frecuencia de CPU (MHz)", "Consumo energético (J)"],
                      f'{config.model_name}-train-data.png')

@@ -31,8 +31,23 @@ energy_query = '''
             _measurement: r._measurement,
             _field: "total_energy",
             _value: (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE0(J)"] else 0.0)
-                 + (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] else 0.0)
+                  + (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE1(J)"] else 0.0)
         }}))'''
+
+temp_query = '''
+    from(bucket: "{influxdb_bucket}")
+        |> range(start: {start_date}, stop: {stop_date})
+        |> filter(fn: (r) => r["_measurement"] == "sensors")
+        |> filter(fn: (r) => r["_field"] == "value")
+        |> filter(fn: (r) => r["label"] == "Package id 0" or r["label"] == "Package id 1")
+        |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)
+        |> pivot(rowKey:["_time"], columnKey: ["label"], valueColumn: "_value")
+        |> map(fn: (r) => ({{
+            _time: r._time,
+            _value: (if exists r["Package id 0"] then r["Package id 0"] else 0.0) 
+                  + (if exists r["Package id 1"] then r["Package id 1"] else 0.0)
+        }}))
+'''
 
 def parse_timestamps(file_name):
     with open(file_name, 'r') as f:
@@ -46,7 +61,7 @@ def parse_timestamps(file_name):
         exp_type = start_line.split(" ")[1]
         if (exp_type == "IDLE"):
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
-        else: # Stress test CPU consumption
+        else:  # Stress test CPU consumption
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
         stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
         timestamps.append((start, stop, exp_type))
@@ -62,20 +77,21 @@ def remove_outliers(df, column, range):
     return df_filtered
 
 def get_experiment_data(start_date, stop_date, exp_type, range):
-    load_query
     load_df = query_influxdb(load_query, start_date, stop_date)
     freq_df = query_influxdb(freq_query, start_date, stop_date)
     energy_df = query_influxdb(energy_query, start_date, stop_date)
+    temp_df = query_influxdb(temp_query, start_date, stop_date)
     load_df_filtered = remove_outliers(load_df, "_value", range)
     freq_df_filtered = remove_outliers(freq_df, "_value", range)
     energy_df_filtered = remove_outliers(energy_df, "_value", range)
     ec_cpu_df = pd.merge(load_df_filtered, energy_df_filtered, on="_time", suffixes=("_load", "_energy"))
+    ec_cpu_df = pd.merge(ec_cpu_df, temp_df, on="_time", suffixes=("", "_temp"))
+    ec_cpu_df.rename(columns={'_value': '_value_temp'}, inplace=True)
     ec_cpu_df = pd.merge(ec_cpu_df, freq_df_filtered, on="_time", suffixes=("", "_freq"))
     ec_cpu_df.rename(columns={'_value': '_value_freq'}, inplace=True)
-    ec_cpu_df = ec_cpu_df[["_time", "_value_load", "_value_freq", "_value_energy"]]
+    ec_cpu_df = ec_cpu_df[["_time", "_value_load", "_value_freq", "_value_energy", "_value_temp"]]
     ec_cpu_df["exp_type"] = exp_type
     ec_cpu_df.dropna(inplace=True)
-
     return ec_cpu_df
 
 def get_time_series(experiment_dates, range):
