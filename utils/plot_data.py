@@ -6,7 +6,6 @@ from matplotlib.dates import DateFormatter, MinuteLocator
 
 def plot_time_series(df, title, xlabel, ylabels, filename):
     path = f'{config.img_dir}/{filename}'
-    print(f'Saving plot in {path}')
     plt.figure()
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
@@ -39,6 +38,22 @@ def plot_time_series(df, title, xlabel, ylabels, filename):
     ax1.legend(lines, labels, loc='upper left')
     ax2.get_legend().remove()
 
+    plt.tight_layout()
+    plt.savefig(path)
+
+def plot_results(expected, predicted, path):
+    expected.shape = (-1)
+    predicted.shape = (-1)
+    plt.figure()
+
+    sns.scatterplot(x=expected, y=predicted, label='Predicciones', color='tab:orange')
+    max_val = max(max(expected), max(predicted))
+    sns.lineplot(x=[0, max_val], y=[0, max_val], label='Predicción Ideal', color='black')
+
+    plt.xlabel('Valores Esperados')
+    plt.ylabel('Valores Predichos')
+    plt.title('Valores Esperados VS Predichos')
+    plt.legend()
     plt.tight_layout()
     plt.savefig(path)
 
