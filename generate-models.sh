@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NODES=("compute0" "compute2") #"core_i9" "ryzen_3900x"
+NODES=("compute0" "compute1" "compute2") #"core_i9" "ryzen_3900x"
 TRAIN_LOADS=("Group_P" "Group_P_and_L" "Group_1P_2L" "Spread_P" "Spread_P_and_L" "General") #TESTS=("Only_P" "Test_P_and_L" "Test_1P_2L")
 LOAD_TYPE="geekbench"
 TEST_BOOL=1
@@ -30,5 +30,4 @@ for NODE in "${NODES[@]}"; do
  		  cat "${LOG_DIR}/${TRAIN_LOAD}.timestamps" >> "${LOG_DIR}/General.timestamps"
  		fi
  	done
-
 done
