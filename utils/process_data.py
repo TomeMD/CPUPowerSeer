@@ -79,6 +79,7 @@ def remove_outliers(df, column, out_range):
     df_filtered = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
     return df_filtered
 
+
 def get_temp_data(start_date, stop_date):
     temp_df = query_influxdb(temp_query, start_date, stop_date)
     temp_df.rename(columns={'_value': 'temp'}, inplace=True)
@@ -86,6 +87,8 @@ def get_temp_data(start_date, stop_date):
     temp_df = temp_df[["time", "temp"]]
     temp_df.dropna(inplace=True)
     return temp_df
+
+
 def get_experiment_data(start_date, stop_date, exp_type, out_range):
     load_df = query_influxdb(load_query, start_date, stop_date)
     freq_df = query_influxdb(freq_query, start_date, stop_date)
@@ -109,7 +112,9 @@ def get_temp_series(timestamps):
     experiment_dates = parse_timestamps(timestamps)
     temp_series = pd.DataFrame(columns=["time", "temp"])
     for start_date, stop_date, _ in experiment_dates:
-        temp_data = get_temp_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"))
+        start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        temp_data = get_temp_data(start_str, stop_str)
         temp_series = pd.concat([temp_series, temp_data], ignore_index=True)
     return temp_series
 
@@ -118,7 +123,9 @@ def get_time_series(timestamps, out_range):
     experiment_dates = parse_timestamps(timestamps)
     time_series = pd.DataFrame(columns=["time", "load", "freq", "energy", "exp_type"])
     for start_date, stop_date, exp_type in experiment_dates:
-        experiment_data = get_experiment_data(start_date.strftime("%Y-%m-%dT%H:%M:%SZ"), stop_date.strftime("%Y-%m-%dT%H:%M:%SZ"), exp_type, out_range)
+        start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        experiment_data = get_experiment_data(start_str, stop_str, exp_type, out_range)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series
 

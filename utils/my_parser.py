@@ -2,7 +2,8 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 def create_parser():
-    parser = argparse.ArgumentParser(description="Modeling CPU power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description="Modeling CPU power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
 
     parser.add_argument(
         "-t",
