@@ -3,15 +3,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, MinuteLocator
 
+
 def plot_temperature(df, filename):
     path = f'{config.img_dir}/{filename}'
     plt.figure()
-    sns.lineplot(x=df["_time"], y=df["_value_temp"])
+    sns.lineplot(x=df["time"], y=df["temp"])
     plt.title("Temperatura de la CPU")
     plt.xlabel("Tiempo (HH:MM)")
     plt.ylabel("Temperatura ºC")
     plt.tight_layout()
     plt.savefig(path)
+
 
 def plot_time_series(df, title, xlabel, ylabels, filename):
     path = f'{config.img_dir}/{filename}'
@@ -20,8 +22,8 @@ def plot_time_series(df, title, xlabel, ylabels, filename):
     ax2 = ax1.twinx()
 
     # Set CPU Utilization axis
-    sns.lineplot(x=df["_time"], y=df["_value_load"], label="Utilización de CPU", ax=ax1)
-    sns.lineplot(x=df["_time"], y=df["_value_freq"], label="Frecuencia de CPU", ax=ax1,color='tab:green')
+    sns.lineplot(x=df["time"], y=df["load"], label="Utilización de CPU", ax=ax1)
+    sns.lineplot(x=df["time"], y=df["freq"], label="Frecuencia de CPU", ax=ax1, color='tab:green')
     ax1.set_xlabel(xlabel)
     ax1.set_ylabel(ylabels[0] + " / " + ylabels[1])
     ax1.tick_params(axis='y')
@@ -29,7 +31,7 @@ def plot_time_series(df, title, xlabel, ylabels, filename):
         label.set_rotation(45)
 
     # Set Energy Consumption axis
-    sns.lineplot(x=df["_time"], y=df["_value_energy"], label="Consumo energético", ax=ax2, color='tab:orange')
+    sns.lineplot(x=df["time"], y=df["energy"], label="Consumo energético", ax=ax2, color='tab:orange')
     ax2.set_ylabel(ylabels[2])
     ax2.tick_params(axis='y')
     ax2.set_ylim(0, 1000)
@@ -50,6 +52,7 @@ def plot_time_series(df, title, xlabel, ylabels, filename):
     plt.tight_layout()
     plt.savefig(path)
 
+
 def plot_results(expected, predicted, path):
     expected.shape = (-1)
     predicted.shape = (-1)
@@ -66,6 +69,7 @@ def plot_results(expected, predicted, path):
     plt.tight_layout()
     plt.savefig(path)
 
+
 def plot_3d_graph(ax, X_poly_test, y_poly_pred):
     ax.scatter(X_poly_test[:, 1], X_poly_test[:, 2], y_poly_pred, color='red', label='Valores predichos')
     ax.set_xlabel('Utilización de CPU')
@@ -73,11 +77,13 @@ def plot_3d_graph(ax, X_poly_test, y_poly_pred):
     ax.set_zlabel('Consumo energético')
     ax.legend()
 
+
 def plot_2d_graph(ax, X, y, xlabel, ylabel):
     ax.scatter(X, y, color='red', label='Valores predichos')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.legend()
+
 
 def plot_model(model, actual_values, X_poly_test, y_poly_pred, filename):
     path = f'{config.img_dir}/{filename}'
