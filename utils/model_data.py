@@ -1,9 +1,10 @@
 from utils import config
-from utils.plot_data import plot_results
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+
 
 class Model:
 
@@ -22,14 +23,14 @@ class Model:
 
     def __set_model_equation(self):
         eq_lines = [
-            f"y = {self.poly_reg.intercept_[0]:.0f}",
+            f"IDLE CONSUMPTION: {self.idle_consumption:.0f} J\n",
+            f"EQUATION: y = {self.poly_reg.intercept_[0]:.0f}",
             *(
                 f" + {self.poly_reg.coef_[0][i+1]:.8f}*{name}"
                 for i, name in enumerate(["U_cpu", "F_cpu", "U_cpu^2", "(U_cpu*F_cpu)", "F_cpu^2"])
-            ),
-            f"\nConsumo en reposo: {self.idle_consumption:.0f} J"
+            )
         ]
-        self.equation = "\n".join(eq_lines)
+        self.equation = "".join(eq_lines)
 
     def __init__(self, name, idle, X, y):
         self.name = name
@@ -49,12 +50,12 @@ class Model:
 
     def write_model_performance(self):
         results_file = f'{config.output_dir}/{config.model_name}-results.out'
-        predictions_plot = f'{config.img_dir}/{config.model_name}-results.png'
-        plot_results(self.y_test, self.y_poly_pred, predictions_plot)
+        norm_factor = np.max(self.y_test) - np.min(self.y_test)
+        rmse = mean_squared_error(self.y_test, self.y_poly_pred, squared=False)
         with open(results_file, 'w') as file:
-            file.write(f"Modelo: {self.name}\n")
-            file.write(f"Ecuación: {self.equation}\n")
-            file.write(f"Mean squared error: {mean_squared_error(self.y_test, self.y_poly_pred)}\n")
-            file.write(f"R2 score: {r2_score(self.y_test, self.y_poly_pred)}\n")
+            file.write(f"MODEL NAME: {self.name}\n")
+            file.write(f"NRMSE: {rmse/norm_factor}\n")
+            file.write(f"R2 SCORE: {r2_score(self.y_test, self.y_poly_pred)}\n")
+            file.write(f"{self.equation}")
             file.write("\n")
         print(f'Performance report and plots stored at {config.output_dir}')

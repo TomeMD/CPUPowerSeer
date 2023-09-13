@@ -6,6 +6,7 @@ output_dir = None
 img_dir = None
 model_name = None
 x_vars = ["load", "freq"]
+vars_labels = ["CPU Utilization (%)", "CPU Frequency (MHz)"]
 train_range = 1.5
 test_range = 1.5  # 0.001
 
