@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     # Plot time series
     plot_temperature(temp_series, f'{config.model_name}-temperature-data.png')
-    plot_time_series(time_series, config.vars_labels, f'{config.model_name}-train-data.png')
+    plot_time_series(time_series, config.x_vars, f'{config.model_name}-train-data.png')
 
     # Prepare data
     idle_consumption = get_idle_consumption(time_series)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Get actual test values if provided
     if config.f_actual_timestamps is not None:
         test_time_series = get_time_series(config.x_vars, config.f_actual_timestamps, config.test_range)
-        plot_time_series(test_time_series, config.vars_labels, f'{config.model_name}-test-data.png')
+        plot_time_series(test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
         X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
         model.update_test_values(X_actual, y_actual)
 

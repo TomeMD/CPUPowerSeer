@@ -15,17 +15,19 @@ def plot_temperature(df, filename):
     plt.savefig(path)
 
 
-def plot_time_series(df, ylabels, filename):
+def plot_time_series(df, x_vars, filename):
     path = f'{config.img_dir}/{filename}'
     plt.figure()
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
 
     # Set CPU Utilization axis
-    sns.lineplot(x=df["time"], y=df["load"], label=ylabels[0], ax=ax1)
-    sns.lineplot(x=df["time"], y=df["freq"], label=ylabels[1], ax=ax1, color='tab:green')
+    for var in x_vars:
+        sns.lineplot(x=df["time"], y=df[var], label=config.x_var_label[var], ax=ax1, color=config.x_var_color[var])
+    # sns.lineplot(x=df["time"], y=df["load"], label=ylabels[0], ax=ax1)
+    # sns.lineplot(x=df["time"], y=df["freq"], label=ylabels[1], ax=ax1, color='tab:green')
     ax1.set_xlabel("Time HH:MM")
-    ax1.set_ylabel(ylabels[0] + " / " + ylabels[1])
+    ax1.set_ylabel("CPU Independent Variables")
     ax1.tick_params(axis='y')
     for label in ax1.get_xticklabels():
         label.set_rotation(45)

@@ -1,6 +1,6 @@
 # CPU Power Consumption Modeling
 
-This tool builds a model to predict CPU energy consumption from CPU utilization and frequency using InfluxDB time series.
+This tool builds a model to predict CPU energy consumption from different CPU variables (Utilization, Frequency,...) using InfluxDB time series.
 
 ## Requirements
 
@@ -30,7 +30,7 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-i INDEPENDENT_VARS] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
@@ -43,6 +43,8 @@ options:
                          Example:
                              Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000
                              Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
+  -i INDEPENDENT_VARS, --independent-vars INDEPENDENT_VARS
+                        Comma-separated list of independent variables to use in the regression model.
   -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
                         File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not 
                                  specified train data will be split into train and test data.

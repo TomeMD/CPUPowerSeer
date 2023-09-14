@@ -5,6 +5,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 
+equation_x_vars = ["U_cpu", "F_cpu", "U_cpu^2", "(U_cpu*F_cpu)", "F_cpu^2"]
+#equation_x_vars = ["U_cpu", "U_cpu^2"]
 
 class Model:
 
@@ -27,7 +29,7 @@ class Model:
             f"EQUATION: y = {self.poly_reg.intercept_[0]:.0f}",
             *(
                 f" + {self.poly_reg.coef_[0][i+1]:.8f}*{name}"
-                for i, name in enumerate(["U_cpu", "F_cpu", "U_cpu^2", "(U_cpu*F_cpu)", "F_cpu^2"])
+                for i, name in enumerate(equation_x_vars)
             )
         ]
         self.equation = "".join(eq_lines)

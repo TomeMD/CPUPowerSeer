@@ -18,6 +18,13 @@ Example:\n \
     )
 
     parser.add_argument(
+        "-i",
+        "--independent-vars",
+        default="load,freq",
+        help="Comma-separated list of independent variables to use in the regression model.",
+    )
+
+    parser.add_argument(
         "-a",
         "--actual-timestamps",
         default=None,

@@ -5,17 +5,31 @@ f_actual_timestamps = None
 output_dir = None
 img_dir = None
 model_name = None
-x_vars = ["load", "freq"]
-vars_labels = ["CPU Utilization (%)", "CPU Frequency (MHz)"]
+x_vars = None
 train_range = 1.5
 test_range = 1.5  # 0.001
 
+x_var_label = {
+    "load": "CPU Utilization (%)",
+    "user_load": "CPU User Utilization (%)",
+    "system_load": "CPU System Utilization (%)",
+    "wait_load": "CPU IO Wait Utilization (%)",
+    "freq": "CPU Frequency (MHz)",
+}
 
+x_var_color = {
+    "load": "tab:blue",
+    "user_load": "tab:blue",
+    "system_load": "tab:purple",
+    "wait_load": "tab:green",
+    "freq": "tab:red",
+}
 def set_config(args):
-    global f_train_timestamps, f_actual_timestamps, model_name, output_dir, img_dir
+    global f_train_timestamps, f_actual_timestamps, model_name, x_vars, output_dir, img_dir
     f_train_timestamps = args.train_timestamps
     f_actual_timestamps = args.actual_timestamps
     model_name = args.name
+    x_vars = args.independent_vars.split(',')
     output_dir = args.output
     img_dir = f'{output_dir}/img'
     os.makedirs(output_dir, exist_ok=True)
