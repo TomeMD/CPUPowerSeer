@@ -17,7 +17,7 @@ def plot_temperature(df, filename):
 
 def plot_time_series(df, x_vars, filename):
     path = f'{config.img_dir}/{filename}'
-    plt.figure()
+    plt.figure(figsize=(25, 10))
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
 
@@ -46,11 +46,11 @@ def plot_time_series(df, x_vars, filename):
     lines2, labels2 = ax2.get_legend_handles_labels()
     lines = lines1 + lines2
     labels = labels1 + labels2
-    ax1.legend(lines, labels, loc='upper left')
+    ax1.legend(lines, labels, loc='center left', bbox_to_anchor=(0.3, 1.3))
     ax2.get_legend().remove()
 
     plt.tight_layout()
-    plt.savefig(path)
+    plt.savefig(path, bbox_inches='tight')
 
 
 def plot_results(expected, predicted, path):
