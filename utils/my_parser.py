@@ -18,10 +18,10 @@ Example:\n \
     )
 
     parser.add_argument(
-        "-i",
-        "--independent-vars",
+        "-m",
+        "--model-variables",
         default="load,freq",
-        help="Comma-separated list of independent variables to use in the regression model.",
+        help="Comma-separated list of variables to use in the regression model.",
     )
 
     parser.add_argument(

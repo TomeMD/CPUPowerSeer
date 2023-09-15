@@ -39,7 +39,7 @@ def set_config(args):
     f_actual_timestamps = args.actual_timestamps
     actual = (f_actual_timestamps is not None)
     model_name = args.name
-    x_vars = args.independent_vars.split(',')
+    x_vars = args.model_variables.split(',')
     output_dir = args.output
     img_dir = f'{output_dir}/img'
     os.makedirs(output_dir, exist_ok=True)
