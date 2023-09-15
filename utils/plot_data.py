@@ -24,8 +24,6 @@ def plot_time_series(df, x_vars, filename):
     # Set CPU Utilization axis
     for var in x_vars:
         sns.lineplot(x=df["time"], y=df[var], label=config.x_var_label[var], ax=ax1, color=config.x_var_color[var])
-    # sns.lineplot(x=df["time"], y=df["load"], label=ylabels[0], ax=ax1)
-    # sns.lineplot(x=df["time"], y=df["freq"], label=ylabels[1], ax=ax1, color='tab:green')
     ax1.set_xlabel("Time HH:MM")
     ax1.set_ylabel("CPU Independent Variables")
     ax1.tick_params(axis='y')
@@ -104,3 +102,16 @@ def plot_results(expected, predicted, path):
 #
 #     plt.tight_layout()
 #     plt.savefig(path)
+def plot_model(model, var, path):
+    X_idx = model.X_test[:, 1].argsort()
+    X_sorted = model.X_test[X_idx]
+    y_sorted = model.y_pred[X_idx]
+
+    plt.figure()
+    sns.lineplot(x=X_sorted[:, 1], y=y_sorted, color=config.x_var_color[var], label="Polynomial regression")
+    plt.xlabel(config.x_var_label[var])
+    plt.ylabel("Energy consumption (J)")
+    plt.title("Model Function")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(path)
