@@ -39,11 +39,13 @@ def get_experiment_data(start_date, stop_date, all_vars, exp_type, out_range):
         if var != "exp_type":
             df = query_influxdb(var_query[var], start_date, stop_date)
             df = remove_outliers(df, "_value", out_range)
+            df.rename(columns={'_value': var}, inplace=True)
+            df = df[["_time", var]]
             if ec_cpu_df.empty:
                 ec_cpu_df = df
             else:
                 ec_cpu_df = pd.merge(ec_cpu_df, df, on='_time')
-            ec_cpu_df.rename(columns={'_value': var}, inplace=True)
+
         else:
             ec_cpu_df[var] = exp_type
     ec_cpu_df.rename(columns={'_time': 'time'}, inplace=True)

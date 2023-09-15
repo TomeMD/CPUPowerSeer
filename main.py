@@ -32,16 +32,19 @@ if __name__ == '__main__':
     model = Model(config.model_name, idle_consumption, X, y)
 
     # Get actual test values if provided
-    if config.f_actual_timestamps is not None:
+    if config.actual:
         test_time_series = get_time_series(config.x_vars, config.f_actual_timestamps, config.test_range)
         plot_time_series(test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
         X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
-        model.update_test_values(X_actual, y_actual)
+        model.set_actual_values(X_actual, y_actual)
 
     # Predict values
-    model.predict_values()
+    model.predict()
 
     # Get results
-    plot_results(model.y_test, model.y_poly_pred, f'{config.img_dir}/{config.model_name}-results.png')
-    model.write_model_performance()
+    plot_results(model.y_test, model.y_pred, f'{config.img_dir}/{config.model_name}-results.png')
+    # If model dimension is 2 it is represented as a function
+    if len(config.x_vars) == 1:
+        plot_model(model, config.x_vars[0], f'{config.img_dir}/{config.model_name}-function.png')
+    model.write_model_performance(config.actual)
 
