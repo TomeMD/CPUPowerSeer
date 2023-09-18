@@ -16,6 +16,7 @@ x_var_label = {
     "system_load": "CPU System Utilization (%)",
     "wait_load": "CPU IO Wait Utilization (%)",
     "freq": "CPU Frequency (MHz)",
+    "temp": "CPU Temperature Cº"
 }
 
 x_var_eq = {
@@ -23,7 +24,8 @@ x_var_eq = {
     "user_load": "U_user",
     "system_load": "U_system",
     "wait_load": "U_wait",
-    "freq": "F_cpu"
+    "freq": "F_cpu",
+    "temp": "T_cpu"
 }
 
 x_var_color = {
@@ -32,6 +34,7 @@ x_var_color = {
     "system_load": "tab:purple",
     "wait_load": "tab:green",
     "freq": "tab:red",
+    "temp": "tab:pink"
 }
 def set_config(args):
     global f_train_timestamps, f_actual_timestamps, actual, model_name, x_vars, output_dir, img_dir
