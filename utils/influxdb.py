@@ -40,7 +40,7 @@ freq_query = '''
     from(bucket: "{influxdb_bucket}")
         |> range(start: {start_date}, stop: {stop_date})
         |> filter(fn: (r) => r["_measurement"] == "cpu_frequency")
-        |> filter(fn: (r) => r["_field"] == "value" )
+        |> filter(fn: (r) => r["_field"] == "average" )
         |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)'''
 
 energy_query = '''
