@@ -45,7 +45,6 @@ def get_experiment_data(start_date, stop_date, all_vars, exp_type, out_range):
                 ec_cpu_df = df
             else:
                 ec_cpu_df = pd.merge(ec_cpu_df, df, on='_time')
-
         else:
             ec_cpu_df[var] = exp_type
     ec_cpu_df.rename(columns={'_time': 'time'}, inplace=True)
@@ -53,20 +52,20 @@ def get_experiment_data(start_date, stop_date, all_vars, exp_type, out_range):
     return ec_cpu_df[all_vars + ["time"]]
 
 
-def get_time_series(x_vars, timestamps, out_range, temp=False):
+def get_time_series(x_vars, timestamps, out_range):
     experiment_dates = parse_timestamps(timestamps)
     all_vars = x_vars.copy()
-    if not temp:
-        all_vars.extend(["energy", "exp_type"])
     time_series = pd.DataFrame(columns=all_vars)
     for start_date, stop_date, exp_type in experiment_dates:
-        if temp:
-            exp_type = None
         start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
         stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
         experiment_data = get_experiment_data(start_str, stop_str, all_vars, exp_type, out_range)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series
+
+
+def merge(df1, df2, col):
+    return pd.merge(df1, df2, on=col)
 
 
 def get_idle_consumption(time_series):

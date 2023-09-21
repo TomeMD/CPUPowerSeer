@@ -25,7 +25,7 @@ def plot_time_series(df, x_vars, filename):
     for var in x_vars:
         sns.lineplot(x=df["time"], y=df[var], label=config.x_var_label[var], ax=ax1, color=config.x_var_color[var])
     ax1.set_xlabel("Time HH:MM")
-    ax1.set_ylabel("CPU Independent Variables")
+    ax1.set_ylabel("CPU Model Variables")
     ax1.tick_params(axis='y')
     for label in ax1.get_xticklabels():
         label.set_rotation(45)
@@ -46,7 +46,7 @@ def plot_time_series(df, x_vars, filename):
     lines2, labels2 = ax2.get_legend_handles_labels()
     lines = lines1 + lines2
     labels = labels1 + labels2
-    ax1.legend(lines, labels, loc='center left', bbox_to_anchor=(0.3, 1.3))
+    ax1.legend(lines, labels, loc='center left', bbox_to_anchor=(0.3, 1.5))
     ax2.get_legend().remove()
 
     plt.tight_layout()

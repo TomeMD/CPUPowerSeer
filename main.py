@@ -16,15 +16,17 @@ if __name__ == '__main__':
     warnings.simplefilter("ignore", MissingPivotFunction)
 
     # Get train data
-    temp_series = get_time_series(["temp"], config.f_train_timestamps, config.train_range, temp=True)
-    time_series = get_time_series(config.x_vars, config.f_train_timestamps, config.train_range)
+    temp_series = get_time_series(["temp"], config.f_train_timestamps, config.train_range)
+    energy_series = get_time_series(["energy", "exp_type"], config.f_train_timestamps, config.train_range)
+    x_var_series = get_time_series(config.x_vars, config.f_train_timestamps, config.train_range)
+    time_series = merge(x_var_series, energy_series, 'time')
 
     # Plot time series
     plot_temperature(temp_series, f'{config.model_name}-temperature-data.png')
     plot_time_series(time_series, config.x_vars, f'{config.model_name}-train-data.png')
 
     # Prepare data
-    idle_consumption = get_idle_consumption(time_series)
+    idle_consumption = get_idle_consumption(energy_series)
     stress_data = get_stress_data(time_series)
     X, y = get_formatted_vars(config.x_vars, stress_data)
 
@@ -33,7 +35,7 @@ if __name__ == '__main__':
 
     # Get actual test values if provided
     if config.actual:
-        test_time_series = get_time_series(config.x_vars, config.f_actual_timestamps, config.test_range)
+        test_time_series = get_time_series(config.x_vars + ["energy", "exp_type"], config.f_actual_timestamps, config.test_range)
         plot_time_series(test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
         X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
         model.set_actual_values(X_actual, y_actual)
