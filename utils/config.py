@@ -11,12 +11,12 @@ train_range = 1.5
 test_range = 1.5  # 0.001
 
 x_var_label = {
-    "load": "CPU Utilization (%)",
-    "user_load": "CPU User Utilization (%)",
-    "system_load": "CPU System Utilization (%)",
-    "wait_load": "CPU IO Wait Utilization (%)",
-    "freq": "CPU Frequency (MHz)",
-    "temp": "CPU Temperature Cº"
+    "load": "Utilization (%)",
+    "user_load": "User Utilization (%)",
+    "system_load": "System Utilization (%)",
+    "wait_load": "IO Wait Utilization (%)",
+    "freq": "Frequency (MHz)",
+    "temp": "Temperature Cº"
 }
 
 x_var_eq = {
