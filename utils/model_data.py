@@ -65,32 +65,20 @@ class Model:
             self.X_actual = self.poly_features.transform(X)
             self.y_actual = y
 
-    def write_test_performance(self):
+    def write_performance(self, expected, predicted):
         results_file = f'{config.output_dir}/{config.model_name}-results.out'
-        norm_factor = np.max(self.y_test) - np.min(self.y_test)
-        rmse = mean_squared_error(self.y_test, self.y_pred, squared=False)
+        norm_factor = np.max(expected) - np.min(expected)
+        rmse = mean_squared_error(expected, predicted, squared=False)
         with open(results_file, 'w') as file:
             file.write(f"MODEL NAME: {self.name}\n")
             file.write(f"NRMSE: {rmse/norm_factor}\n")
-            file.write(f"R2 SCORE: {r2_score(self.y_test, self.y_pred)}\n")
-            file.write(f"{self.equation}")
-            file.write("\n")
-        print(f'Performance report and plots stored at {config.output_dir}')
-
-    def write_actual_performance(self):
-        results_file = f'{config.output_dir}/{config.model_name}-results.out'
-        norm_factor = np.max(self.y_actual) - np.min(self.y_actual)
-        rmse = mean_squared_error(self.y_actual, self.y_pred_actual, squared=False)
-        with open(results_file, 'w') as file:
-            file.write(f"MODEL NAME: {self.name}\n")
-            file.write(f"NRMSE: {rmse/norm_factor}\n")
-            file.write(f"R2 SCORE: {r2_score(self.y_actual, self.y_pred_actual)}\n")
+            file.write(f"R2 SCORE: {r2_score(expected, predicted)}\n")
             file.write(f"{self.equation}")
             file.write("\n")
         print(f'Performance report and plots stored at {config.output_dir}')
 
     def write_model_performance(self, actual=False):
         if actual:
-            self.write_actual_performance()
+            self.write_performance(self.y_actual, self.y_pred_actual)
         else:
-            self.write_test_performance()
+            self.write_performance(self.y_test, self.y_pred)
