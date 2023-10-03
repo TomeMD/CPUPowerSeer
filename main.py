@@ -41,8 +41,12 @@ if __name__ == '__main__':
     model.predict()
 
     # Get results
-    plot_results(model.y_test, model.y_pred, f'{config.model_name}-results.png')
-    # If model dimension is 2 it is represented as a function
+    if config.actual:
+        plot_results(model.y_actual, model.y_pred_actual, f'{config.model_name}-results.png')
+    else:
+        plot_results(model.y_test, model.y_pred, f'{config.model_name}-results.png')
+
+    # If model dimension is 2 it is represented as a polynomial function
     if len(config.x_vars) == 1:
         plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
     model.write_model_performance(config.actual)

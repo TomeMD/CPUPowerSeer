@@ -58,10 +58,11 @@ class Model:
 
     def predict(self):
         self.predict_test_values()
-        self.predict_actual_values()
+        if self.X_actual is not None:
+            self.predict_actual_values()
 
     def set_actual_values(self, X, y):
-        if (X is not None and y is not None):
+        if X is not None and y is not None:
             self.X_actual = self.poly_features.transform(X)
             self.y_actual = y
 
