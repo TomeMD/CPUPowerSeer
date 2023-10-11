@@ -43,11 +43,11 @@ freq_query = '''
         |> filter(fn: (r) => r["_field"] == "average" )
         |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)'''
 
-sum_freq_query = '''
+mpstat_freq_query = '''
     from(bucket: "{influxdb_bucket}")
         |> range(start: {start_date}, stop: {stop_date})
         |> filter(fn: (r) => r["_measurement"] == "cpu_frequency")
-        |> filter(fn: (r) => r["_field"] == "sum" )
+        |> filter(fn: (r) => r["_field"] == "mpstat_average" )
         |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)'''
 
 total_freq_query = '''
@@ -94,7 +94,7 @@ var_query = {
     "system_load": system_load_query,
     "wait_load": wait_load_query,
     "freq": freq_query,
-    "sum_freq": sum_freq_query,
+    "mpstat_freq": mpstat_freq_query,
     "total_freq": total_freq_query,
     "energy": energy_query,
     "temp": temp_query

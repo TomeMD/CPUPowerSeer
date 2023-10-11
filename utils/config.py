@@ -16,7 +16,7 @@ x_var_label = {
     "system_load": "System Utilization (%)",
     "wait_load": "IO Wait Utilization (%)",
     "freq": "Frequency (MHz)",
-    "sum_freq": "Frequency Sum (MHz)",
+    "mpstat_freq": "Frequency mpstat (MHz)",
     "total_freq": "Total Frequency (MHz)",
     "temp": "Temperature Cº"
 }
@@ -27,7 +27,7 @@ x_var_eq = {
     "system_load": "U_system",
     "wait_load": "U_wait",
     "freq": "F_cpu",
-    "sum_freq": "F_sum_cpu",
+    "mpstat_freq": "F_mpstat_cpu",
     "total_freq": "F_total_cpu",
     "temp": "T_cpu"
 }
@@ -38,7 +38,7 @@ x_var_color = {
     "system_load": "tab:purple",
     "wait_load": "tab:green",
     "freq": "tab:red",
-    "sum_freq": "tab:red",
+    "mpstat_freq": "tab:red",
     "total_freq": "tab:red",
     "temp": "tab:pink"
 }

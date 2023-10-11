@@ -72,8 +72,7 @@ def plot_results(expected, predicted, filename):
 def plot_model(model, var, filename):
     X_idx = model.X_test[:, 1].argsort()
     X_sorted = model.X_test[X_idx]
-    y_sorted = model.y_pred[X_idx]
-
+    y_sorted = model.y_pred[X_idx].ravel()
     plt.figure()
     set_line_plot(X_sorted[:, 1], y_sorted, plt.gca(), config.x_var_color[var], "Polynomial regression")
     set_basic_labels("Model Function", config.x_var_label[var], "Energy consumption (J)", plt.gca())
