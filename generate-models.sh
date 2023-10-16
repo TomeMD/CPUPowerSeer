@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NODES=("compute1") #"core_i9" "ryzen_3900x"
+NODES=("compute0") #"core_i9" "ryzen_3900x"
 TRAIN_LOADS=("General") #"Group_P" "Group_P_and_L" "Group_1P_2L" "Spread_P" "Spread_P_and_L" "General") #TESTS=("Only_P" "Test_P_and_L" "Test_1P_2L")
 LOAD_TYPE="geekbench"
 TEST_BOOL=1
@@ -22,14 +22,14 @@ for NODE in "${NODES[@]}"; do
       mkdir -p "${OUT_DIR}"
       rm -rf "${OUT_DIR}"/img/*
       if [ $TEST_BOOL -gt 0 ]; then
-        python3 main.py -n "${TRAIN_LOAD}" -t "${LOG_DIR}/${TRAIN_LOAD}.timestamps" -m load,freq,temp -a "${TEST_DIR}/${TEST_KERNEL}.timestamps" -o "${OUT_DIR}"
+        python3 main.py -n "${TRAIN_LOAD}" -t "${LOG_DIR}/${TRAIN_LOAD}.timestamps" -m load,total_freq,temp -a "${TEST_DIR}/${TEST_KERNEL}.timestamps" -o "${OUT_DIR}"
       else
         python3 main.py -n "${TRAIN_LOAD}" -t "${LOG_DIR}/${TRAIN_LOAD}.timestamps" -o "${OUT_DIR}"
       fi
  		done
 
  		#if [ "$TRAIN_LOAD" != "General" ]; then
- 		  #cat "${LOG_DIR}/${TRAIN_LOAD}.timestamps" >> "${LOG_DIR}/General.timestamps"
+ 		 # cat "${LOG_DIR}/${TRAIN_LOAD}.timestamps" >> "${LOG_DIR}/General.timestamps"
  		#fi
  	done
 done
