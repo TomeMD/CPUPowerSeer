@@ -3,7 +3,6 @@ from utils.process_data import *
 from utils.plot_data import *
 from utils.model_data import Model
 
-
 import warnings
 from influxdb_client.client.warnings import MissingPivotFunction
 
@@ -13,6 +12,8 @@ if __name__ == '__main__':
     parser = create_parser()
     args = parser.parse_args()
     config.set_config(args)
+    config.check_args()
+    config.print_config()
     warnings.simplefilter("ignore", MissingPivotFunction)
 
     # Get train data

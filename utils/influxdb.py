@@ -4,7 +4,7 @@ load_query = '''
     from(bucket: "{influxdb_bucket}")
         |> range(start: {start_date}, stop: {stop_date})
         |> filter(fn: (r) => r["_measurement"] == "percpu")
-        |> filter(fn: (r) => r["_field"] == "total" )
+        |> filter(fn: (r) => r["_field"] == "user" or r["_field"] == "system")
         |> aggregateWindow(every: 2s, fn: mean, createEmpty: false)
         |> group(columns: ["_measurement"])
         |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)'''
@@ -88,6 +88,7 @@ influxdb_url = "http://montoxo.des.udc.es:8086"
 influxdb_token = "MyToken"
 influxdb_org = "MyOrg"
 influxdb_bucket = "glances"
+
 
 def query_influxdb(query, start_date, stop_date):
     client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)

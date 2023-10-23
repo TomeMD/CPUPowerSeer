@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from utils.config import *
 from datetime import datetime, timedelta
 from utils.influxdb import *
 
@@ -54,11 +55,14 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
     experiment_dates = parse_timestamps(timestamps)
     all_vars = x_vars.copy()
     time_series = pd.DataFrame(columns=all_vars)
+    log(f"Time series starts at {experiment_dates[0][0]} and end at {experiment_dates[-1][1]}")
     for start_date, stop_date, exp_type in experiment_dates:
         if not include_idle and exp_type == "IDLE":
             continue
         start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
         stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        if verbose:
+            log(f"Querying data to InfluxDB between {start_str} and {stop_str}")
         experiment_data = get_experiment_data(start_str, stop_str, all_vars, out_range)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series

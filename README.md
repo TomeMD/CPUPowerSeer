@@ -7,7 +7,7 @@ This tool builds a model to predict CPU energy consumption from different CPU va
 You need to install the following libraries:
 
 ```python
-pip install influxdb-client pandas numpy scikit-learn matplotlib seaborn
+pip install influxdb-client pandas numpy scikit-learn matplotlib seaborn termcolor
 ```
 
 ## Configuration
@@ -30,12 +30,13 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-t TRAIN_TIMESTAMPS] [-i INDEPENDENT_VARS] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: main.py [-h] [-v] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
+  -v, --verbose         Increase output verbosity
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
                         File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:
                              <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>

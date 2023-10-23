@@ -6,6 +6,13 @@ def create_parser():
         description="Modeling CPU power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
 
     parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Increase output verbosity",
+    )
+
+    parser.add_argument(
         "-t",
         "--train-timestamps",
         default="log/stress.timestamps",

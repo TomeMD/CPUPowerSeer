@@ -1,9 +1,11 @@
 from utils import config
+from utils.logger import log
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
+
 
 def generate_monomials(X):
     monomials = X.copy()
@@ -12,6 +14,8 @@ def generate_monomials(X):
         for j in range(i + 1, len(X)):
             monomials.append(f"{X[i]}×{X[j]}")
     return monomials
+
+
 class Model:
 
     def __set_train_and_test_data(self, X, y):
@@ -76,7 +80,7 @@ class Model:
             file.write(f"R2 SCORE: {r2_score(expected, predicted)}\n")
             file.write(f"{self.equation}")
             file.write("\n")
-        print(f'Performance report and plots stored at {config.output_dir}')
+        log(f'Performance report and plots stored at {config.output_dir}')
 
     def write_model_performance(self, actual=False):
         if actual:

@@ -1,7 +1,7 @@
 from utils import config
 import seaborn as sns
 import matplotlib.pyplot as plt
-from matplotlib.dates import DateFormatter, MinuteLocator
+from matplotlib.dates import DateFormatter, AutoDateLocator
 
 
 def set_basic_labels(title, xlabel, ylabel, ax):
@@ -24,7 +24,7 @@ def set_line_plot(x, y, ax, color=None, label=None):
 def set_time_axis(ax):
     for label in ax.get_xticklabels():
         label.set_rotation(45)
-    ax.xaxis.set_major_locator(MinuteLocator(interval=10))
+    ax.xaxis.set_major_locator(AutoDateLocator())
     ax.xaxis.set_major_formatter(DateFormatter('%H:%M'))
 
 
