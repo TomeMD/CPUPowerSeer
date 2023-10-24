@@ -3,8 +3,6 @@ from utils.process_data import *
 from utils.plot_data import *
 from utils.model_data import Model
 
-import warnings
-from influxdb_client.client.warnings import MissingPivotFunction
 
 if __name__ == '__main__':
 
@@ -14,7 +12,6 @@ if __name__ == '__main__':
     config.set_config(args)
     config.check_args()
     config.print_config()
-    warnings.simplefilter("ignore", MissingPivotFunction)
 
     # Get train data
     temp_series = get_time_series(["temp"], config.f_train_timestamps, config.train_range, True)

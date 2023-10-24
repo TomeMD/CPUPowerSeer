@@ -1,7 +1,8 @@
 import os
-from utils.logger import log
+from utils.influxdb import *
 
 verbose = None
+influxdb_bucket = None
 f_train_timestamps = None
 f_actual_timestamps = None
 actual = None
@@ -62,11 +63,14 @@ def check_files():
 def check_args():
     check_x_vars()
     check_files()
+    check_bucket_exists(influxdb_bucket)
 
 
 def set_config(args):
-    global verbose, f_train_timestamps, f_actual_timestamps, actual, model_name, x_vars, output_dir, img_dir, log_file
+    global verbose, influxdb_bucket, f_train_timestamps, f_actual_timestamps, \
+            actual, model_name, x_vars, output_dir, img_dir, log_file
     verbose = args.verbose
+    influxdb_bucket = args.bucket
     f_train_timestamps = args.train_timestamps
     f_actual_timestamps = args.actual_timestamps
     actual = (f_actual_timestamps is not None)
@@ -81,6 +85,7 @@ def set_config(args):
 
 def print_config():
     log(f"Model name: {model_name}")
+    log(f"InfluxDB bucket name: {influxdb_bucket}")
     log(f"Train data timestamps file: {f_train_timestamps}")
     log(f"Actual (test) data timestamps file: {f_actual_timestamps}")
     log(f"Model variables: {x_vars}")

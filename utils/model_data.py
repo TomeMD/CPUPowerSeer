@@ -1,5 +1,4 @@
 from utils import config
-from utils.logger import log
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
@@ -80,7 +79,7 @@ class Model:
             file.write(f"R2 SCORE: {r2_score(expected, predicted)}\n")
             file.write(f"{self.equation}")
             file.write("\n")
-        log(f'Performance report and plots stored at {config.output_dir}')
+        config.log(f'Performance report and plots stored at {config.output_dir}')
 
     def write_model_performance(self, actual=False):
         if actual:

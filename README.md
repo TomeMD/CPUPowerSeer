@@ -30,13 +30,15 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-v] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: main.py [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
+  -b BUCKET, --bucket BUCKET
+                        InfluxDB Bucket to retrieve data from.
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
                         File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:
                              <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>

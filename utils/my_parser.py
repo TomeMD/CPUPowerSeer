@@ -13,6 +13,13 @@ def create_parser():
     )
 
     parser.add_argument(
+        "-b",
+        "--bucket",
+        default="glances",
+        help="InfluxDB Bucket to retrieve data from.",
+    )
+
+    parser.add_argument(
         "-t",
         "--train-timestamps",
         default="log/stress.timestamps",

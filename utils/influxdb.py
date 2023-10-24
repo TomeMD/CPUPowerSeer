@@ -1,4 +1,9 @@
+import warnings
 from influxdb_client import InfluxDBClient
+from influxdb_client.client.warnings import MissingPivotFunction
+from utils.logger import log
+
+warnings.simplefilter("ignore", MissingPivotFunction)
 
 load_query = '''
     from(bucket: "{influxdb_bucket}")
@@ -87,12 +92,19 @@ var_query = {
 influxdb_url = "http://montoxo.des.udc.es:8086"
 influxdb_token = "MyToken"
 influxdb_org = "MyOrg"
-influxdb_bucket = "glances"
 
 
-def query_influxdb(query, start_date, stop_date):
+def check_bucket_exists(bucket_name):
+    client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
+    buckets_api = client.buckets_api()
+    if buckets_api.find_bucket_by_name(bucket_name) is None:
+        log(f"Specified bucket {bucket_name} doesn't exists", "ERR")
+        exit(1)
+
+
+def query_influxdb(query, start_date, stop_date, bucket):
     client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
     query_api = client.query_api()
-    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=influxdb_bucket)
+    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=bucket)
     result = query_api.query_data_frame(query)
     return result
