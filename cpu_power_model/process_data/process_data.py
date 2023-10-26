@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
-from utils import config
+from cpu_power_model.config import config
+from cpu_power_model.logs.logger import log
+from cpu_power_model.influxdb.influxdb_queries import var_query
+from cpu_power_model.influxdb.influxdb import query_influxdb
 from datetime import datetime, timedelta
 
 
@@ -9,7 +12,7 @@ def parse_timestamps(file_name):
         with open(file_name, 'r') as f:
             lines = f.readlines()
     except FileNotFoundError:
-        config.log(f"Error while parsing timestamps (file doesn't exists): {file_name}", "ERR")
+        log(f"Error while parsing timestamps (file doesn't exists): {file_name}", "ERR")
     timestamps = []
     for i in range(0, len(lines), 2):
         start_line = lines[i]
@@ -23,7 +26,7 @@ def parse_timestamps(file_name):
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
         stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
         timestamps.append((start, stop, exp_type))
-    config.log(f"Timestamps belong to period [{timestamps[0][0]}, {timestamps[-1][1]}]")
+    log(f"Timestamps belong to period [{timestamps[0][0]}, {timestamps[-1][1]}]")
     return timestamps
 
 
@@ -40,7 +43,7 @@ def remove_outliers(df, column, out_range):
 def get_experiment_data(start_date, stop_date, all_vars, out_range):
     ec_cpu_df = pd.DataFrame()
     for var in all_vars:
-        df = config.query_influxdb(config.var_query[var], start_date, stop_date, config.influxdb_bucket)
+        df = query_influxdb(var_query[var], start_date, stop_date, config.influxdb_bucket)
         if not df.empty:
             df = remove_outliers(df, "_value", out_range)
             df.rename(columns={'_value': var}, inplace=True)
@@ -63,7 +66,7 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
         start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
         stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
         if config.verbose:
-            config.log(f"Querying data to InfluxDB between {start_str} and {stop_str}")
+            log(f"Querying data to InfluxDB between {start_str} and {stop_str}")
         experiment_data = get_experiment_data(start_str, stop_str, all_vars, out_range)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series

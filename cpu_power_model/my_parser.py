@@ -1,5 +1,10 @@
+import os
 import argparse
 from argparse import RawTextHelpFormatter
+
+from cpu_power_model.logs.logger import log
+from cpu_power_model.config import config
+from cpu_power_model.influxdb.influxdb import check_bucket_exists
 
 
 def create_parser():
@@ -74,3 +79,42 @@ in an orderly manner. By default is 'EC-CPU-MODEL'",
     )
 
     return parser
+
+
+def check_x_vars():
+    aux = set(config.x_vars) - set(config.supported_vars)
+    if any(var not in config.supported_vars for var in config.x_vars):
+        log(f"{aux} not supported. Supported vars: {config.supported_vars}", "ERR")
+        exit(1)
+
+
+def check_files():
+    if not os.path.exists(config.f_train_timestamps):
+        log(f"Specified non existent actual timestamps file: {config.f_train_timestamps}.", "ERR")
+        exit(1)
+    if config.actual and not os.path.exists(config.f_actual_timestamps):
+        log(f"Specified non existent actual timestamps file: {config.f_actual_timestamps}.", "ERR")
+        exit(1)
+
+
+def check_config():
+    check_x_vars()
+    check_files()
+    check_bucket_exists(config.influxdb_bucket)
+
+
+def update_config(args):
+    config.model_name = args.name
+    config.verbose = args.verbose
+    config.interactive = args.interactive
+    config.influxdb_bucket = args.bucket
+    config.f_train_timestamps = args.train_timestamps
+    config.f_actual_timestamps = args.actual_timestamps
+    config.actual = (config.f_actual_timestamps is not None)
+    config.x_vars = args.model_variables.split(',')
+    config.output_dir = args.output
+    config.img_dir = f'{args.output}/img'
+    config.log_file = f'{args.output}/{args.name}.log'
+    os.makedirs(config.output_dir, exist_ok=True)
+    os.makedirs(config.img_dir, exist_ok=True)
+

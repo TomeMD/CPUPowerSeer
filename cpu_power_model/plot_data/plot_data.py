@@ -1,4 +1,4 @@
-from utils import config
+from cpu_power_model import config
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, AutoDateLocator

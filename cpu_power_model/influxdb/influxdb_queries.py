@@ -1,11 +1,3 @@
-import warnings
-from influxdb_client import InfluxDBClient
-from influxdb_client.client.warnings import MissingPivotFunction
-from urllib3.exceptions import ReadTimeoutError
-from utils.logger import *
-
-warnings.simplefilter("ignore", MissingPivotFunction)
-
 load_query = '''
     from(bucket: "{influxdb_bucket}")
         |> range(start: {start_date}, stop: {stop_date})
@@ -89,39 +81,3 @@ var_query = {
     "energy": energy_query,
     "temp": temp_query
 }
-
-influxdb_url = "http://montoxo.des.udc.es:8086"
-influxdb_token = "MyToken"
-influxdb_org = "MyOrg"
-
-
-def check_bucket_exists(bucket_name):
-    client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
-    buckets_api = client.buckets_api()
-    if buckets_api.find_bucket_by_name(bucket_name) is None:
-        log(f"Specified bucket {bucket_name} doesn't exists", "ERR")
-        exit(1)
-
-
-def query_influxdb(query, start_date, stop_date, bucket):
-    retry = 3
-    client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
-    query_api = client.query_api()
-    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=bucket)
-    while retry != 0:
-        try:
-            result = query_api.query_data_frame(query)
-        except ReadTimeoutError:
-            if retry != 0:
-                log(f"InfluxDB query has timed out (start_date = {start_date}, stop_date = {stop_date}). Retrying", "WARN")
-                retry -= 1
-            else:
-                log(f"InfluxDB query has timed out (start_date = {start_date}, stop_date = {stop_date}). No more tries", "ERR")
-        except Exception as e:
-            log(f"Unexpected error while querying InfluxDB (start_date = {start_date}, stop_date = {stop_date}).", "ERR")
-            log(f"{e}", "ERR")
-            exit(1)
-        else:
-            retry = 0
-
-    return result

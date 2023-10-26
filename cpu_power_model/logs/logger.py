@@ -1,7 +1,7 @@
 import datetime
 from termcolor import colored
 
-import utils.config
+from cpu_power_model.config import config
 
 
 def print_header():
@@ -33,7 +33,7 @@ def log(message, message_type="INFO", print_log=True):
     header = colored(f"[{timestamp} {message_type}]", color, on_color)
     log_entry = f"[{timestamp} {message_type}] {message}\n"
 
-    with open(utils.config.log_file, 'a') as f:
+    with open(config.log_file, 'a') as f:
         f.write(log_entry)
     if print_log:
         print(f"{header} {message}")

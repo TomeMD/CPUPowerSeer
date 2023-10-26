@@ -1,6 +1,6 @@
 import os
-from utils.process_data import *
-from utils.plot_data import *
+from cpu_power_model.process_data.process_data import *
+from cpu_power_model.plot_data.plot_data import *
 
 
 def test_model(model):
@@ -9,7 +9,7 @@ def test_model(model):
         config.log(f"Parsing test timestamps from {config.f_actual_timestamps}")
         test_timestamps = parse_timestamps(config.f_actual_timestamps)
         config.log("Getting model variables time series from corresponding period")
-        test_time_series = get_time_series(config.x_vars+["energy"], test_timestamps, config.test_range)
+        test_time_series = get_time_series(config.x_vars + ["energy"], test_timestamps, config.test_range)
         plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
         X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
         model.set_actual_values(X_actual, y_actual)
