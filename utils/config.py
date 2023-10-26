@@ -2,6 +2,7 @@ import os
 from utils.influxdb import *
 
 verbose = None
+interactive = None
 influxdb_bucket = None
 f_train_timestamps = None
 f_actual_timestamps = None
@@ -67,9 +68,10 @@ def check_args():
 
 
 def set_config(args):
-    global verbose, influxdb_bucket, f_train_timestamps, f_actual_timestamps, \
+    global verbose, interactive, influxdb_bucket, f_train_timestamps, f_actual_timestamps, \
             actual, model_name, x_vars, output_dir, img_dir, log_file
     verbose = args.verbose
+    interactive = args.interactive
     influxdb_bucket = args.bucket
     f_train_timestamps = args.train_timestamps
     f_actual_timestamps = args.actual_timestamps
@@ -85,6 +87,7 @@ def set_config(args):
 
 def print_config():
     log(f"Model name: {model_name}")
+    log(f"Testing Mode: {'Interactive' if interactive else 'Non-interactive'}")
     log(f"InfluxDB bucket name: {influxdb_bucket}")
     log(f"Train data timestamps file: {f_train_timestamps}")
     log(f"Actual (test) data timestamps file: {f_actual_timestamps}")

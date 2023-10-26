@@ -1,7 +1,8 @@
 import warnings
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.warnings import MissingPivotFunction
-from utils.logger import log
+from urllib3.exceptions import ReadTimeoutError
+from utils.logger import *
 
 warnings.simplefilter("ignore", MissingPivotFunction)
 
@@ -103,8 +104,24 @@ def check_bucket_exists(bucket_name):
 
 
 def query_influxdb(query, start_date, stop_date, bucket):
+    retry = 3
     client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
     query_api = client.query_api()
     query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=bucket)
-    result = query_api.query_data_frame(query)
+    while retry != 0:
+        try:
+            result = query_api.query_data_frame(query)
+        except ReadTimeoutError:
+            if retry != 0:
+                log(f"InfluxDB query has timed out (start_date = {start_date}, stop_date = {stop_date}). Retrying", "WARN")
+                retry -= 1
+            else:
+                log(f"InfluxDB query has timed out (start_date = {start_date}, stop_date = {stop_date}). No more tries", "ERR")
+        except Exception as e:
+            log(f"Unexpected error while querying InfluxDB (start_date = {start_date}, stop_date = {stop_date}).", "ERR")
+            log(f"{e}", "ERR")
+            exit(1)
+        else:
+            retry = 0
+
     return result

@@ -30,13 +30,15 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 ### Options
 
 ```shell
-usage: main.py [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: main.py [-h] [-v] [-i] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
+  -i, --interactive     Interactive testing mode. When entering this mode CPU Power model will create the model and then ask to the user for test timestamps files to test 
+                        the model. Interactive mode will be useful to test one model with different test time series.
   -b BUCKET, --bucket BUCKET
                         InfluxDB Bucket to retrieve data from.
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
@@ -49,8 +51,8 @@ options:
   -m MODEL_VARIABLES, --model-variables MODEL_VARIABLES
                         Comma-separated list of variables to use in the regression model.
   -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
-                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not 
-                                 specified train data will be split into train and test data.
+                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). 
+                        If not specified train data will be split into train and test data.
   -o OUTPUT, --output OUTPUT
                         Directory to save time series plots and results. By default is './out'.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'

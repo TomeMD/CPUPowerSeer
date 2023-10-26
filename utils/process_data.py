@@ -5,8 +5,11 @@ from datetime import datetime, timedelta
 
 
 def parse_timestamps(file_name):
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
+    try:
+        with open(file_name, 'r') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        config.log(f"Error while parsing timestamps (file doesn't exists): {file_name}", "ERR")
     timestamps = []
     for i in range(0, len(lines), 2):
         start_line = lines[i]
@@ -20,6 +23,7 @@ def parse_timestamps(file_name):
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
         stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
         timestamps.append((start, stop, exp_type))
+    config.log(f"Timestamps belong to period [{timestamps[0][0]}, {timestamps[-1][1]}]")
     return timestamps
 
 
@@ -51,11 +55,9 @@ def get_experiment_data(start_date, stop_date, all_vars, out_range):
 
 
 def get_time_series(x_vars, timestamps, out_range, include_idle=False):
-    experiment_dates = parse_timestamps(timestamps)
     all_vars = x_vars.copy()
     time_series = pd.DataFrame(columns=all_vars)
-    config.log(f"Time series starts at {experiment_dates[0][0]} and end at {experiment_dates[-1][1]}")
-    for start_date, stop_date, exp_type in experiment_dates:
+    for start_date, stop_date, exp_type in timestamps:
         if not include_idle and exp_type == "IDLE":
             continue
         start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -68,9 +70,8 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
 
 
 def get_idle_consumption(timestamps, out_range):
-    experiment_dates = parse_timestamps(timestamps)
     energy_series = pd.DataFrame(columns=["energy"])
-    for start_date, stop_date, exp_type in experiment_dates:
+    for start_date, stop_date, exp_type in timestamps:
         if exp_type == "IDLE":
             start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
             stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")

@@ -1,6 +1,7 @@
 import argparse
 from argparse import RawTextHelpFormatter
 
+
 def create_parser():
     parser = argparse.ArgumentParser(
         description="Modeling CPU power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
@@ -10,6 +11,15 @@ def create_parser():
         "--verbose",
         action="store_true",
         help="Increase output verbosity",
+    )
+
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        action="store_true",
+        help="Interactive testing mode. When entering this mode CPU Power model will create the model and then ask to \
+the user for test timestamps files to test \nthe model. Interactive mode will be \
+useful to test one model with different test time series."
     )
 
     parser.add_argument(
@@ -23,7 +33,8 @@ def create_parser():
         "-t",
         "--train-timestamps",
         default="log/stress.timestamps",
-        help="File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:\n \
+        help="File storing time series timestamps from train data. By default is log/stress.timestamps. \
+Timestamps must be stored in the following format:\n \
     <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>\n \
     <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>\n \
 Example:\n \
@@ -42,8 +53,9 @@ Example:\n \
         "-a",
         "--actual-timestamps",
         default=None,
-        help="File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). If not \n \
-        specified train data will be split into train and test data.",
+        help="File storing time series timestamps from actual values of load and energy to \
+test the model (in same format as train timestamps). \n\
+If not specified train data will be split into train and test data.",
     )
 
     parser.add_argument(
@@ -57,7 +69,8 @@ Example:\n \
         "-n",
         "--name",
         default="EC-CPU-MODEL",
-        help="Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'",
+        help="Name of the model. It is useful to generate models from different sets of experiments \
+in an orderly manner. By default is 'EC-CPU-MODEL'",
     )
 
     return parser
