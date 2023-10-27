@@ -1,0 +1,7 @@
+influxdb-client
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+termcolor

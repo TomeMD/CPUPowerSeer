@@ -90,7 +90,7 @@ def check_x_vars():
 
 def check_files():
     if not os.path.exists(config.f_train_timestamps):
-        log(f"Specified non existent actual timestamps file: {config.f_train_timestamps}.", "ERR")
+        log(f"Specified non existent train timestamps file: {config.f_train_timestamps}.", "ERR")
         exit(1)
     if config.actual and not os.path.exists(config.f_actual_timestamps):
         log(f"Specified non existent actual timestamps file: {config.f_actual_timestamps}.", "ERR")

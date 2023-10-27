@@ -1,14 +1,17 @@
 import os
-from cpu_power_model.process_data.process_data import *
-from cpu_power_model.plot_data.plot_data import *
+
+from cpu_power_model.config import config
+from cpu_power_model.logs.logger import log, get_input_and_log
+from cpu_power_model.data.process import parse_timestamps, get_time_series, get_formatted_vars
+from cpu_power_model.data.plot import plot_time_series, plot_model, plot_results
 
 
 def test_model(model):
     # Get actual test values if provided
     if config.actual:
-        config.log(f"Parsing test timestamps from {config.f_actual_timestamps}")
+        log(f"Parsing test timestamps from {config.f_actual_timestamps}")
         test_timestamps = parse_timestamps(config.f_actual_timestamps)
-        config.log("Getting model variables time series from corresponding period")
+        log("Getting model variables time series from corresponding period")
         test_time_series = get_time_series(config.x_vars + ["energy"], test_timestamps, config.test_range)
         plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
         X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
@@ -27,18 +30,18 @@ def save_model_results(model):
     model.write_model_performance(config.actual)
 
 
-def run_tests_with_mode(model):
+def run(model):
     if config.interactive:
-        config.log("Entering interactive testing mode")
+        log("Entering interactive testing mode")
         keep_testing = True
         base_dir = config.output_dir
         config.actual = True
         while keep_testing:
-            test_file = config.get_input_and_log("Enter test timestamps file path: ")
+            test_file = get_input_and_log("Enter test timestamps file path: ")
             if not os.path.exists(test_file):
-                config.log(f"Specified timestamps file doesn't exists: {test_file}", "ERR")
+                log(f"Specified timestamps file doesn't exists: {test_file}", "ERR")
                 continue
-            test_name = config.get_input_and_log("Enter test time series name: ")
+            test_name = get_input_and_log("Enter test time series name: ")
             config.f_actual_timestamps = test_file
             config.output_dir = f'{base_dir}/{test_name}'
             config.img_dir = f'{config.output_dir}/img'
@@ -46,7 +49,7 @@ def run_tests_with_mode(model):
             os.makedirs(config.img_dir, exist_ok=True)
             test_model(model)
             save_model_results(model)
-            answer = config.get_input_and_log("¿Do you want to run more tests? (y/n): ").lower()
+            answer = get_input_and_log("¿Do you want to run more tests? (y/n): ").lower()
             if answer != "y":
                 keep_testing = False
     else:

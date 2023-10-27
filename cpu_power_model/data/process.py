@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
+from datetime import datetime, timedelta
+
 from cpu_power_model.config import config
 from cpu_power_model.logs.logger import log
 from cpu_power_model.influxdb.influxdb_queries import var_query
 from cpu_power_model.influxdb.influxdb import query_influxdb
-from datetime import datetime, timedelta
 
 
 def parse_timestamps(file_name):

@@ -1,9 +1,11 @@
-from cpu_power_model import config
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
+
+from cpu_power_model.config import config
+from cpu_power_model.logs.logger import log
 
 
 def generate_monomials(X):
@@ -79,7 +81,7 @@ class Model:
             file.write(f"R2 SCORE: {r2_score(expected, predicted)}\n")
             file.write(f"{self.equation}")
             file.write("\n")
-        config.log(f'Performance report and plots stored at {config.output_dir}')
+        log(f'Performance report and plots stored at {config.output_dir}')
 
     def write_model_performance(self, actual=False):
         if actual:

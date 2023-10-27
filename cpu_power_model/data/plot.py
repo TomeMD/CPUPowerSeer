@@ -1,7 +1,8 @@
-from cpu_power_model import config
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, AutoDateLocator
+
+from cpu_power_model.config import config
 
 
 def set_basic_labels(title, xlabel, ylabel, ax):

@@ -2,14 +2,6 @@
 
 This tool builds a model to predict CPU energy consumption from different CPU variables (Utilization, Frequency,...) using InfluxDB time series.
 
-## Requirements
-
-You need to install the following libraries:
-
-```python
-pip install influxdb-client pandas numpy scikit-learn matplotlib seaborn termcolor
-```
-
 ## Configuration
 
 Before using this tool you must configure the InfluxDB server from which the metrics will be exported, as well as the timestamps of the time series you want to obtain from that server.
@@ -27,17 +19,31 @@ influxdb_bucket = "your-bucket"
 
 It is assumed that this server stores Glances and RAPL metrics in a proper format.
 
-### Options
+## Installation
+
+To install and use this tool run:
+
+```
+pip install .
+```
+
+If you only want to install the project dependencies, run:
+
+```
+pip install -r requirements.txt
+```
+
+## Execution and options
 
 ```shell
-usage: main.py [-h] [-v] [-i] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: cpu-power-model [-h] [-v] [-i] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
-  -i, --interactive     Interactive testing mode. When entering this mode CPU Power model will create the model and then ask to the user for test timestamps files to test 
+  -i, --interactive     Interactive testing mode. When entering this mode CPU Power model will create the model and then ask to the user for test timestamps files to test
                         the model. Interactive mode will be useful to test one model with different test time series.
   -b BUCKET, --bucket BUCKET
                         InfluxDB Bucket to retrieve data from.
@@ -51,7 +57,7 @@ options:
   -m MODEL_VARIABLES, --model-variables MODEL_VARIABLES
                         Comma-separated list of variables to use in the regression model.
   -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
-                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps). 
+                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps).
                         If not specified train data will be split into train and test data.
   -o OUTPUT, --output OUTPUT
                         Directory to save time series plots and results. By default is './out'.
@@ -68,3 +74,21 @@ With the following meaning:
 - `EXP-NAME`: User desired name.
 - `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and REAL-VALUES if it's a period in which test data was obtained.
 - `DATE-START` and `DATE-STOP`: Timestamp of the beginning or end of the experiment in UTC format `%Y-%m-%d %H:%M:%S%z`.
+
+Example:
+```shell
+Group_P (cores = 0,1) start: 2023-04-21 09:33:53+0000
+Group_P (cores = 0,1) stop: 2023-04-21 09:35:54+0000
+Group_P (cores = 0,1,2,3) start: 2023-04-21 09:36:24+0000
+Group_P (cores = 0,1,2,3) stop: 2023-04-21 09:38:24+0000
+Group_P (cores = 0,1,2,3,4,5) start: 2023-04-21 09:38:54+0000
+Group_P (cores = 0,1,2,3,4,5) stop: 2023-04-21 09:40:54+0000
+Group_P (cores = 0,1,2,3,4,5,6,7) start: 2023-04-21 09:41:24+0000
+Group_P (cores = 0,1,2,3,4,5,6,7) stop: 2023-04-21 09:43:25+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9) start: 2023-04-21 09:43:55+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9) stop: 2023-04-21 09:45:56+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11) start: 2023-04-21 09:46:26+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11) stop: 2023-04-21 09:48:26+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) start: 2023-04-21 09:48:56+0000
+Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) stop: 2023-04-21 09:50:57+0000
+```

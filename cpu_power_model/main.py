@@ -1,40 +1,24 @@
-from my_parser import create_parser, check_config, update_config
-from run_test_mode import run_tests_with_mode
-from cpu_power_model.config.print_config import print_config
-from cpu_power_model.logs.logger import log
-from cpu_power_model.config import config as conf
-from cpu_power_model.process_data.process_data import *
-from cpu_power_model.plot_data.plot_data import *
-from cpu_power_model.model_energy.model_data import Model
+from cpu_power_model import utils
 
-if __name__ == '__main__':
 
-    # Configuration
-    parser = create_parser()
-    args = parser.parse_args()
-    update_config(args)
-    check_config()
-    print_config()
+def main():
+
+    # Parse arguments
+    utils.parse_arguments.run()
 
     # Get train data
-    log(f"Parsing train timestamps from {conf.f_train_timestamps}")
-    train_timestamps = parse_timestamps(conf.f_train_timestamps)
-    log("Getting temperature time series from corresponding period")
-    temp_series = get_time_series(["temp"], train_timestamps, conf.train_range, True)
-    log("Getting model variables time series from corresponding period")
-    time_series = get_time_series(conf.x_vars + ["energy"], train_timestamps, conf.train_range)
+    train_timestamps, temp_series, time_series = utils.get_train_data.run()
 
     # Plot time series
-    plot_var("CPU Temperature", temp_series, "temp", f'{conf.model_name}-temperature-data.png')
-    plot_time_series("Train Time Series", time_series, conf.x_vars, f'{conf.model_name}-train-data.png')
+    utils.plot_train_data.run(temp_series, time_series)
 
-    # Prepare data
-    idle_consumption = get_idle_consumption(train_timestamps, conf.train_range)
-    X, y = get_formatted_vars(conf.x_vars, time_series)
+    # Train model
+    reg_model = utils.train_model.run(train_timestamps, time_series)
 
-    # Create model
-    reg_model = Model(conf.model_name, idle_consumption, X, y)
+    # Test model
+    utils.run_test_mode.run(reg_model)
 
-    run_tests_with_mode(reg_model)
 
+if __name__ == '__main__':
+    main()
 
