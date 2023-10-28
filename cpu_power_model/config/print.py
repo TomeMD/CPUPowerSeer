@@ -4,9 +4,8 @@ from cpu_power_model.config import config
 
 def print_config():
     log(f"Model name: {config.model_name}")
-    log(f"Testing Mode: {'Interactive' if config.interactive else 'Non-interactive'}")
     log(f"InfluxDB bucket name: {config.influxdb_bucket}")
-    log(f"Train data timestamps file: {config.f_train_timestamps}")
-    log(f"Actual (test) data timestamps file: {config.f_actual_timestamps}")
+    log(f"Train data timestamps file: {config.train_ts_file}")
+    log(f"Actual (test) data timestamps files list: {config.test_ts_files_list}")
     log(f"Model variables: {config.x_vars}")
     log(f"Output directory: {config.output_dir}")

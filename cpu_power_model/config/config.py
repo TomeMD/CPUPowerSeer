@@ -1,9 +1,8 @@
 verbose = None
-interactive = None
 influxdb_bucket = None
-f_train_timestamps = None
-f_actual_timestamps = None
-actual = None
+train_ts_file = None
+test_ts_files_list = []
+test_results_dir = None
 output_dir = None
 img_dir = None
 log_file = None

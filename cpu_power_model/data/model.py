@@ -72,7 +72,7 @@ class Model:
             self.y_actual = y
 
     def write_performance(self, expected, predicted):
-        results_file = f'{config.output_dir}/{config.model_name}-results.out'
+        results_file = f'{config.test_results_dir}/{config.model_name}-results.out'
         norm_factor = np.max(expected) - np.min(expected)
         rmse = mean_squared_error(expected, predicted, squared=False)
         with open(results_file, 'w') as file:
@@ -82,9 +82,3 @@ class Model:
             file.write(f"{self.equation}")
             file.write("\n")
         log(f'Performance report and plots stored at {config.output_dir}')
-
-    def write_model_performance(self, actual=False):
-        if actual:
-            self.write_performance(self.y_actual, self.y_pred_actual)
-        else:
-            self.write_performance(self.y_test, self.y_pred)

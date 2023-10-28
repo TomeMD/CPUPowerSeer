@@ -5,8 +5,8 @@ from cpu_power_model.logs.logger import log
 
 def run():
 
-    log(f"Parsing train timestamps from {config.f_train_timestamps}")
-    train_timestamps = parse_timestamps(config.f_train_timestamps)
+    log(f"Parsing train timestamps from {config.train_ts_file}")
+    train_timestamps = parse_timestamps(config.train_ts_file)
 
     log("Getting temperature time series from corresponding period")
     temp_series = get_time_series(["temp"], train_timestamps, config.train_range, True)

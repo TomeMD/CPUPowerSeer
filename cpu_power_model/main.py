@@ -16,7 +16,7 @@ def main():
     reg_model = utils.train_model.run(train_timestamps, time_series)
 
     # Test model
-    utils.run_test_mode.run(reg_model)
+    utils.test_model.run(reg_model)
 
 
 if __name__ == '__main__':

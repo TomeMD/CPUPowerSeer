@@ -36,19 +36,17 @@ pip install -r requirements.txt
 ## Execution and options
 
 ```shell
-usage: cpu-power-model [-h] [-v] [-i] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS] [-o OUTPUT] [-n NAME]
+usage: cpu-power-model [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS_LIST] [-o OUTPUT] [-n NAME]
 
 Modeling CPU power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
-  -i, --interactive     Interactive testing mode. When entering this mode CPU Power model will create the model and then ask to the user for test timestamps files to test
-                        the model. Interactive mode will be useful to test one model with different test time series.
   -b BUCKET, --bucket BUCKET
                         InfluxDB Bucket to retrieve data from.
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
-                        File storing time series timestamps from train data. By default is log/stress.timestamps. Timestamps must be stored in the following format:
+                        File storing time series timestamps from train data. Timestamps must be stored in the following format:
                              <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>
                              <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>
                          Example:
@@ -56,14 +54,13 @@ options:
                              Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
   -m MODEL_VARIABLES, --model-variables MODEL_VARIABLES
                         Comma-separated list of variables to use in the regression model.
-  -a ACTUAL_TIMESTAMPS, --actual-timestamps ACTUAL_TIMESTAMPS
-                        File storing time series timestamps from actual values of load and energy to test the model (in same format as train timestamps).
-                        If not specified train data will be split into train and test data.
+  -a ACTUAL_TIMESTAMPS_LIST, --actual-timestamps-list ACTUAL_TIMESTAMPS_LIST
+                        Comma-separated list of files storing time series timestamps from actual values of load and energy to test
+                        the model (in same format as train timestamps). If any file is specified train data will be split into train and test data.
   -o OUTPUT, --output OUTPUT
                         Directory to save time series plots and results. By default is './out'.
-  -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'EC-CPU-MODEL'
+  -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'General'
 ```
-
 
 Timestamps files must be stored in the following format:
 ```shell
