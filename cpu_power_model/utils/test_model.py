@@ -29,12 +29,20 @@ def get_test_data(model, file):
     plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
     X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
     model.set_actual_values(X_actual, y_actual)
+    return test_time_series
 
 
-def save_model_results(model):
+def save_model_results(model, test_time_series=None):
+
     expected = model.y_actual if model.y_actual is not None else model.y_test
     predicted = model.y_pred_actual if model.y_pred_actual is not None else model.y_pred
     plot_results(expected, predicted, f'{config.model_name}-results.png')
+    # If actual test data is provided plot predicted time series
+    if test_time_series is not None:
+        predicted_col = predicted.flatten()
+        test_time_series['energy_predicted'] = predicted_col
+        plot_time_series("Predicted Time Series", test_time_series,
+                         config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
     # If model dimension is 2 it is represented as a polynomial function
     if len(config.x_vars) == 1:
         plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
@@ -46,9 +54,9 @@ def run(model):
         for file in config.test_ts_files_list:
             test_name = get_test_name(file)
             set_test_output(test_name)
-            get_test_data(model, file)
+            test_time_series = get_test_data(model, file)
             model.predict()
-            save_model_results(model)
+            save_model_results(model, test_time_series)
     else:
         model.predict()
         save_model_results(model)

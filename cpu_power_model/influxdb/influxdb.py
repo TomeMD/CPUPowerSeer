@@ -21,7 +21,7 @@ def query_influxdb(query, start_date, stop_date, bucket):
     retry = 3
     client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
     query_api = client.query_api()
-    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=bucket)
+    query = query.format(start_date=start_date, stop_date=stop_date, influxdb_bucket=bucket, influxdb_window="5s")
     while retry != 0:
         try:
             result = query_api.query_data_frame(query)
