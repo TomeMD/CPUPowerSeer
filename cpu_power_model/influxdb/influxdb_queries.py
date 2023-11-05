@@ -41,7 +41,7 @@ freq_query = '''
         |> filter(fn: (r) => r["_field"] == "average" )
         |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)'''
 
-energy_query = '''
+power_query = '''
     from(bucket: "{influxdb_bucket}")
         |> range(start: {start_date}, stop: {stop_date})
         |> filter(fn: (r) => r["_measurement"] == "POWER_PACKAGE")
@@ -52,7 +52,7 @@ energy_query = '''
             _time: r._time,
             host: r.host,
             _measurement: r._measurement,
-            _field: "total_energy",
+            _field: "total_power",
             _value: (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE0(W)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE0(W)"] else 0.0)
                   + (if exists r["rapl:::PACKAGE_ENERGY:PACKAGE1(W)"] then r["rapl:::PACKAGE_ENERGY:PACKAGE1(W)"] else 0.0)
         }}))'''
@@ -78,6 +78,6 @@ var_query = {
     "system_load": system_load_query,
     "wait_load": wait_load_query,
     "freq": freq_query,
-    "energy": energy_query,
+    "power": power_query,
     "temp": temp_query
 }

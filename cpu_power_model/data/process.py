@@ -74,14 +74,14 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
 
 
 def get_idle_consumption(timestamps, out_range):
-    energy_series = pd.DataFrame(columns=["energy"])
+    power_series = pd.DataFrame(columns=["power"])
     for start_date, stop_date, exp_type in timestamps:
         if exp_type == "IDLE":
             start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
             stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-            experiment_data = get_experiment_data(start_str, stop_str, ["energy"], out_range)
-            energy_series = pd.concat([energy_series, experiment_data], ignore_index=True)
-    return energy_series["energy"].mean()
+            experiment_data = get_experiment_data(start_str, stop_str, ["power"], out_range)
+            power_series = pd.concat([power_series, experiment_data], ignore_index=True)
+    return power_series["power"].mean()
 
 
 def get_formatted_vars(x_vars, data):
@@ -89,5 +89,5 @@ def get_formatted_vars(x_vars, data):
     for i, var in enumerate(x_vars):
         x_values.append(data[var].values.reshape(-1, 1))
     x_stack = np.hstack(x_values)
-    y = data["energy"].values.reshape(-1, 1)
+    y = data["power"].values.reshape(-1, 1)
     return x_stack, y

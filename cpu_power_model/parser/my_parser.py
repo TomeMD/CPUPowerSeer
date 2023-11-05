@@ -9,7 +9,7 @@ from cpu_power_model.influxdb.influxdb import check_bucket_exists
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        description="Modeling CPU power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
+        description="Modeling CPU Power consumption from InfluxDB time series.", formatter_class=RawTextHelpFormatter)
 
     parser.add_argument(
         "-v",
@@ -42,16 +42,16 @@ Example:\n \
         "-m",
         "--model-variables",
         default="load,freq",
-        help="Comma-separated list of variables to use in the regression model.",
+        help="Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.",
     )
 
     parser.add_argument(
         "-a",
         "--actual-timestamps-list",
         default=None,
-        help="Comma-separated list of files storing time series timestamps from actual values of load and energy to \
-test\nthe model (in same format as train timestamps). If any file is specified train data will be split into train \
-and test data.",
+        help="Comma-separated list of files storing time series timestamps from actual values of predictor variables \
+and power to test\nthe model (in same format as train timestamps). If any file is specified train data will be split \
+into train and test data.",
     )
 
     parser.add_argument(

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NODES=("compute2")
-TRAIN_LOADS=("Group_P") #"Group_P" "Group_P_and_L" "Group_1P_2L" "Spread_P" "Spread_P_and_L" "General")
+TRAIN_LOADS=("General") #"Group_P" "Group_P_and_L" "Group_1P_2L" "Spread_P" "Spread_P_and_L" "General")
 LOAD_TYPE="all"
 LOAD_EXECUTION="1"
 TEST_LOAD="npb_btio"

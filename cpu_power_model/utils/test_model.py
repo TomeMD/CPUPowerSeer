@@ -25,8 +25,8 @@ def get_test_data(model, file):
     log(f"Parsing test timestamps from {file}")
     test_timestamps = parse_timestamps(file)
     log("Getting model variables time series from corresponding period")
-    test_time_series = get_time_series(config.x_vars + ["energy"], test_timestamps, config.test_range)
-    plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
+    test_time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range)
+    #plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
     X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
     model.set_actual_values(X_actual, y_actual)
     return test_time_series
@@ -40,7 +40,7 @@ def save_model_results(model, test_time_series=None):
     # If actual test data is provided plot predicted time series
     if test_time_series is not None:
         predicted_col = predicted.flatten()
-        test_time_series['energy_predicted'] = predicted_col
+        test_time_series['power_predicted'] = predicted_col
         plot_time_series("Predicted Time Series", test_time_series,
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
     # If model dimension is 2 it is represented as a polynomial function

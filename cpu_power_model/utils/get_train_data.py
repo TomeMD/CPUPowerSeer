@@ -12,6 +12,6 @@ def run():
     temp_series = get_time_series(["temp"], train_timestamps, config.train_range, True)
 
     log("Getting model variables time series from corresponding period")
-    time_series = get_time_series(config.x_vars + ["energy"], train_timestamps, config.train_range)
+    time_series = get_time_series(config.x_vars + ["power"], train_timestamps, config.train_range)
 
     return train_timestamps, temp_series, time_series

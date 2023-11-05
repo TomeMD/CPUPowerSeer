@@ -6,7 +6,7 @@ from cpu_power_model.config import config
 
 def print_header():
     print("CPU POWER MODEL")
-    print("Modeling CPU Energy Consumption from InfluxDB Time Series")
+    print("Modeling CPU Power Consumption from InfluxDB Time Series")
 
 
 def log(message, message_type="INFO", print_log=True):
