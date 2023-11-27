@@ -21,6 +21,13 @@ It is assumed that this server stores Glances and RAPL metrics in a proper forma
 
 ## Installation
 
+First of all, you can (and should) create a virtual environment by running:
+
+```
+python -m venv my_venv
+source my_venv/bin/activate
+```
+
 To install and use this tool run:
 
 ```
@@ -31,6 +38,12 @@ If you only want to install the project dependencies, run:
 
 ```
 pip install -r requirements.txt
+```
+
+Finally, when you no longer want to use cpu-power-model, you can deactivate your virtual environment by running:
+
+``` 
+deactivate
 ```
 
 ## Execution and options

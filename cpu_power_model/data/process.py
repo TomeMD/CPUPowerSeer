@@ -1,3 +1,5 @@
+import warnings
+
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -6,6 +8,8 @@ from cpu_power_model.config import config
 from cpu_power_model.logs.logger import log
 from cpu_power_model.influxdb.influxdb_queries import var_query
 from cpu_power_model.influxdb.influxdb import query_influxdb
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def parse_timestamps(file_name):
@@ -23,9 +27,10 @@ def parse_timestamps(file_name):
         exp_type = start_line.split(" ")[1]
         if exp_type == "IDLE":
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
+            stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
         else:  # Stress test CPU consumption
             start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
-        stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
+            stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=20)
         timestamps.append((start, stop, exp_type))
     log(f"Timestamps belong to period [{timestamps[0][0]}, {timestamps[-1][1]}]")
     return timestamps
@@ -54,7 +59,12 @@ def get_experiment_data(start_date, stop_date, all_vars, out_range):
             else:
                 ec_cpu_df = pd.merge(ec_cpu_df, df, on='_time')
     ec_cpu_df.rename(columns={'_time': 'time'}, inplace=True)
-    ec_cpu_df.dropna(inplace=True)
+    try:
+        new_df = ec_cpu_df[all_vars + ["time"]]
+    except KeyError:
+        log(f"Error getting data between {start_date} and {stop_date}", "ERR")
+        print(ec_cpu_df)
+        exit(1)
     return ec_cpu_df[all_vars + ["time"]]
 
 
@@ -69,6 +79,7 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
         if config.verbose:
             log(f"Querying data to InfluxDB between {start_str} and {stop_str}")
         experiment_data = get_experiment_data(start_str, stop_str, all_vars, out_range)
+        experiment_data.dropna(inplace=True)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
     return time_series
 
@@ -80,6 +91,7 @@ def get_idle_consumption(timestamps, out_range):
             start_str = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
             stop_str = stop_date.strftime("%Y-%m-%dT%H:%M:%SZ")
             experiment_data = get_experiment_data(start_str, stop_str, ["power"], out_range)
+            experiment_data.dropna(inplace=True)
             power_series = pd.concat([power_series, experiment_data], ignore_index=True)
     return power_series["power"].mean()
 

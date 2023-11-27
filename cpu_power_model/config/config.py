@@ -35,7 +35,7 @@ x_var_color = {
     "load": "tab:blue",
     "user_load": "tab:blue",
     "system_load": "tab:purple",
-    "wait_load": "tab:green",
+    "wait_load": "tab:pink",
     "freq": "tab:red",
     "temp": "tab:pink"
 }

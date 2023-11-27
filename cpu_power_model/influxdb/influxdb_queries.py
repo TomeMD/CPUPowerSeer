@@ -4,6 +4,7 @@ load_query = '''
         |> filter(fn: (r) => r["_measurement"] == "percpu")
         |> filter(fn: (r) => r["_field"] == "user" or r["_field"] == "system")
         |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)
+        |> timeShift(duration: -6s)
         |> group(columns: ["_measurement"])
         |> aggregateWindow(every: {influxdb_window}, fn: sum, createEmpty: false)'''
 
@@ -13,6 +14,7 @@ user_load_query = '''
         |> filter(fn: (r) => r["_measurement"] == "percpu")
         |> filter(fn: (r) => r["_field"] == "user" )
         |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)
+        |> timeShift(duration: -6s)
         |> group(columns: ["_measurement"])
         |> aggregateWindow(every: {influxdb_window}, fn: sum, createEmpty: false)'''
 
@@ -22,6 +24,7 @@ system_load_query = '''
         |> filter(fn: (r) => r["_measurement"] == "percpu")
         |> filter(fn: (r) => r["_field"] == "system" )
         |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)
+        |> timeShift(duration: -6s)
         |> group(columns: ["_measurement"])
         |> aggregateWindow(every: {influxdb_window}, fn: sum, createEmpty: false)'''
 
@@ -31,6 +34,7 @@ wait_load_query = '''
         |> filter(fn: (r) => r["_measurement"] == "percpu")
         |> filter(fn: (r) => r["_field"] == "iowait" )
         |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)
+        |> timeShift(duration: -6s)
         |> group(columns: ["_measurement"])
         |> aggregateWindow(every: {influxdb_window}, fn: sum, createEmpty: false)'''
 
