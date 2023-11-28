@@ -1,9 +1,10 @@
 import os
 import re
+import pandas as pd
 
 from cpu_power_model.config import config
 from cpu_power_model.logs.logger import log
-from cpu_power_model.data.process import parse_timestamps, get_time_series, get_formatted_vars
+from cpu_power_model.data.process import get_timestamp_from_line, get_time_series, get_formatted_vars
 from cpu_power_model.data.plot import plot_time_series, plot_model, plot_results
 
 
@@ -13,23 +14,44 @@ def get_test_name(file):
     return occurrences[-1]
 
 
-def set_test_output(test_name):
-    config.test_results_dir = f'{config.output_dir}/test/{test_name}'
+def get_threads_timestamps(file):
+    try:
+        with open(file, 'r') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        log(f"Error while parsing timestamps (file doesn't exists): {file}", "ERR")
+    threads_timestamps = []
+    for i in range(0, len(lines), 2):
+        start_line = lines[i]
+        stop_line = lines[i+1]
+        threads = len(start_line.split(" ")[-4][:-1].split(","))
+        threads_timestamps.append((threads, start_line, stop_line))
+    return threads_timestamps
+
+
+def set_test_output(test_name, threads):
+    if threads != 0:
+        config.test_results_dir = f'{config.output_dir}/test/{test_name}/{threads}'
+    else:
+        config.test_results_dir = f'{config.output_dir}/test/{test_name}'
     config.img_dir = f'{config.test_results_dir}/img'
     os.makedirs(config.test_results_dir, exist_ok=True)
     os.makedirs(config.img_dir, exist_ok=True)
     log(f"Test {test_name} output directory set to {config.test_results_dir}")
 
 
-def get_test_data(model, file):
-    log(f"Parsing test timestamps from {file}")
-    test_timestamps = parse_timestamps(file)
+def get_test_data(start_line, stop_line):
+    test_timestamps = get_timestamp_from_line(start_line, stop_line, 0)
     log("Getting model variables time series from corresponding period")
-    test_time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range)
-    #plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
-    X_actual, y_actual = get_formatted_vars(config.x_vars, test_time_series)
+    time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range)
+    print(time_series)
+    return time_series
+    # plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
+
+
+def update_test_model_values(model, time_series):
+    X_actual, y_actual = get_formatted_vars(config.x_vars, time_series)
     model.set_actual_values(X_actual, y_actual)
-    return test_time_series
 
 
 def save_model_results(model, test_time_series=None):
@@ -49,14 +71,25 @@ def save_model_results(model, test_time_series=None):
     model.write_performance(expected, predicted)
 
 
+def run_test(test_name, time_series, model, threads):
+    set_test_output(test_name, threads)
+    update_test_model_values(model, time_series)
+    model.predict()
+    save_model_results(model, time_series)
+
+
 def run(model):
     if not len(config.test_ts_files_list) == 0:
         for file in config.test_ts_files_list:
             test_name = get_test_name(file)
-            set_test_output(test_name)
-            test_time_series = get_test_data(model, file)
-            model.predict()
-            save_model_results(model, test_time_series)
+            threads_timestamps = get_threads_timestamps(file)
+            test_time_series = pd.DataFrame(columns=config.x_vars.copy() + ["power"])
+            for t in threads_timestamps:
+                log(f"Running test {test_name} with {t[0]} threads")
+                time_series_threads = get_test_data(t[1], t[2])
+                run_test(test_name, time_series_threads, model, t[0])
+                test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
+            run_test(test_name, test_time_series, model, 0)
     else:
         model.predict()
         save_model_results(model)

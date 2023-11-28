@@ -12,6 +12,17 @@ from cpu_power_model.influxdb.influxdb import query_influxdb
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
+def get_timestamp_from_line(start_line, stop_line, offset):
+    start_str = " ".join(start_line.split(" ")[-2:]).strip()
+    stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
+    exp_type = start_line.split(" ")[1]
+    if exp_type == "IDLE":
+        offset = 0
+    start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=offset)
+    stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=offset)
+    return [(start, stop, exp_type)]
+
+
 def parse_timestamps(file_name):
     try:
         with open(file_name, 'r') as f:
@@ -22,16 +33,8 @@ def parse_timestamps(file_name):
     for i in range(0, len(lines), 2):
         start_line = lines[i]
         stop_line = lines[i + 1]
-        start_str = " ".join(start_line.split(" ")[-2:]).strip()
-        stop_str = " ".join(stop_line.split(" ")[-2:]).strip()
-        exp_type = start_line.split(" ")[1]
-        if exp_type == "IDLE":
-            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z')
-            stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z')
-        else:  # Stress test CPU consumption
-            start = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S%z') + timedelta(seconds=20)
-            stop = datetime.strptime(stop_str, '%Y-%m-%d %H:%M:%S%z') - timedelta(seconds=20)
-        timestamps.append((start, stop, exp_type))
+        ts_line = get_timestamp_from_line(start_line, stop_line, 20)
+        timestamps.append(ts_line[0])
     log(f"Timestamps belong to period [{timestamps[0][0]}, {timestamps[-1][1]}]")
     return timestamps
 
