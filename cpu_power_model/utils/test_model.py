@@ -40,11 +40,10 @@ def set_test_output(test_name, threads):
     log(f"Test {test_name} output directory set to {config.test_results_dir}")
 
 
-def get_test_data(start_line, stop_line):
+def get_test_data(start_line, stop_line, initial_date):
     test_timestamps = get_timestamp_from_line(start_line, stop_line, 0)
     log("Getting model variables time series from corresponding period")
-    time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range)
-    print(time_series)
+    time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range, initial_date=initial_date)
     return time_series
     # plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
 
@@ -83,10 +82,15 @@ def run(model):
         for file in config.test_ts_files_list:
             test_name = get_test_name(file)
             threads_timestamps = get_threads_timestamps(file)
-            test_time_series = pd.DataFrame(columns=config.x_vars.copy() + ["power"])
+            test_time_series = pd.DataFrame(columns=config.x_vars.copy() + ["power"] + ["time_diff"] + ["time_unit"])
+            first = True
+            initial_date = None
             for t in threads_timestamps:
                 log(f"Running test {test_name} with {t[0]} threads")
-                time_series_threads = get_test_data(t[1], t[2])
+                time_series_threads = get_test_data(t[1], t[2], initial_date)
+                if first:
+                    initial_date = time_series_threads["time"].min()
+                    first = False
                 run_test(test_name, time_series_threads, model, t[0])
                 test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
             run_test(test_name, test_time_series, model, 0)

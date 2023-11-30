@@ -41,14 +41,13 @@ def plot_time_series(title, df, x_vars, filename, show_predictions=False):
     ax2 = ax1.twinx()
     # Plot 1 line for each predictor variable (Left Axis: ax1)
     for var in x_vars:
-        set_line_plot(df["time"], df[var], ax1, config.x_var_color[var], config.x_var_label[var])
+        set_line_plot(df["time_diff"], df[var], ax1, config.x_var_color[var], config.x_var_label[var])
     # Plot dependent variable "power" (Right Axis: ax2)
-    set_line_plot(df["time"], df["power"], ax2, 'tab:orange', "Power Consumption (W)")
+    set_line_plot(df["time_diff"], df["power"], ax2, 'tab:orange', "Power Consumption (W)")
     # Plot predicted power if provided (Right Axis: ax2)
     if show_predictions:
-        set_line_plot(df["time"], df["power_predicted"], ax2, 'tab:green', "Predicted Power Consumption (W)", "dashed")
-    set_time_axis(ax1)
-    set_basic_labels(title, "Time HH:MM", "CPU Model Variables", ax1)
+        set_line_plot(df["time_diff"], df["power_predicted"], ax2, 'tab:green', "Predicted Power Consumption (W)", "dashed")
+    set_basic_labels(title, f"Time ({df['time_unit'].iloc[0]})", "CPU Model Variables", ax1)
     set_basic_labels(None, None, "Power Consumption (W)", ax2)
     set_legend(ax1, ax2)
     save_plot(filename)
@@ -57,9 +56,8 @@ def plot_time_series(title, df, x_vars, filename, show_predictions=False):
 
 def plot_var(title, df, var, filename):
     fig = plt.figure()
-    set_line_plot(df["time"], df[var], plt.gca(), config.x_var_color[var])
-    set_time_axis(plt.gca())
-    set_basic_labels(title, "Time (HH:MM)", config.x_var_label[var], plt.gca())
+    set_line_plot(df["time_diff"], df[var], plt.gca(), config.x_var_color[var])
+    set_basic_labels(title, f"Time ({df['time_unit'].iloc[0]})", config.x_var_label[var], plt.gca())
     save_plot(filename)
     plt.close(fig)
 

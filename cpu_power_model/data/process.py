@@ -49,6 +49,23 @@ def remove_outliers(df, column, out_range):
     return df_filtered
 
 
+def set_time_diff(df, time_column, initial_date=None):
+    first_date = initial_date if initial_date is not None else df[time_column].min()
+    last_date = df[time_column].max()
+    time_diff = (df[time_column] - first_date)
+    total_duration = last_date - first_date
+
+    if total_duration < pd.Timedelta(hours=1):
+        df["time_diff"] = time_diff.dt.total_seconds()
+        df["time_unit"] = 'seconds'
+    elif total_duration < pd.Timedelta(hours=12):
+        df["time_diff"] = time_diff.dt.total_seconds() / 60
+        df["time_unit"] = 'minutes'
+    else:
+        df["time_diff"] = time_diff.dt.total_seconds() / 3600
+        df["time_unit"] = 'hours'
+
+
 def get_experiment_data(start_date, stop_date, all_vars, out_range):
     ec_cpu_df = pd.DataFrame()
     for var in all_vars:
@@ -71,7 +88,7 @@ def get_experiment_data(start_date, stop_date, all_vars, out_range):
     return ec_cpu_df[all_vars + ["time"]]
 
 
-def get_time_series(x_vars, timestamps, out_range, include_idle=False):
+def get_time_series(x_vars, timestamps, out_range, include_idle=False, initial_date=None):
     all_vars = x_vars.copy()
     time_series = pd.DataFrame(columns=all_vars)
     for start_date, stop_date, exp_type in timestamps:
@@ -84,6 +101,7 @@ def get_time_series(x_vars, timestamps, out_range, include_idle=False):
         experiment_data = get_experiment_data(start_str, stop_str, all_vars, out_range)
         experiment_data.dropna(inplace=True)
         time_series = pd.concat([time_series, experiment_data], ignore_index=True)
+    set_time_diff(time_series, "time", initial_date)
     return time_series
 
 
