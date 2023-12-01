@@ -67,25 +67,25 @@ def set_time_diff(df, time_column, initial_date=None):
 
 
 def get_experiment_data(start_date, stop_date, all_vars, out_range):
-    ec_cpu_df = pd.DataFrame()
+    exp_df = pd.DataFrame()
     for var in all_vars:
         df = query_influxdb(var_query[var], start_date, stop_date, config.influxdb_bucket)
         if not df.empty:
             df = remove_outliers(df, "_value", out_range)
             df.rename(columns={'_value': var}, inplace=True)
             df = df[["_time", var]]
-            if ec_cpu_df.empty:
-                ec_cpu_df = df
+            if exp_df.empty:
+                exp_df = df
             else:
-                ec_cpu_df = pd.merge(ec_cpu_df, df, on='_time')
-    ec_cpu_df.rename(columns={'_time': 'time'}, inplace=True)
+                exp_df = pd.merge(exp_df, df, on='_time')
+    exp_df.rename(columns={'_time': 'time'}, inplace=True)
     try:
-        new_df = ec_cpu_df[all_vars + ["time"]]
+        exp_df = exp_df[all_vars + ["time"]]
     except KeyError:
         log(f"Error getting data between {start_date} and {stop_date}", "ERR")
-        print(ec_cpu_df)
+        print(exp_df)
         exit(1)
-    return ec_cpu_df[all_vars + ["time"]]
+    return exp_df
 
 
 def get_time_series(x_vars, timestamps, out_range, include_idle=False, initial_date=None):

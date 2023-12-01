@@ -27,7 +27,7 @@ class Model:
         user_squared = user ** 2
         system_squared = system ** 2
         user_system_squared = user_squared * system_squared
-        frequency_cubed = frequency / (user * system)
+        frequency_cubed = frequency * (user + system)
 
         X_custom = np.column_stack([user, system, user_system, user_squared, system_squared, user_system_squared, frequency_cubed])
 
@@ -43,7 +43,6 @@ class Model:
         model.fit(self.X_train, self.y_train)
         self.regression = model
 
-
     def __set_model_equation(self):
         names_list = [config.x_var_eq[var] for var in config.x_vars if var != 'freq']
         eq_lines = [
@@ -53,7 +52,7 @@ class Model:
                 f" + {self.regression.coef_[0][i+1]:.8f}*{name}"
                 for i, name in enumerate(generate_monomials(names_list))
             ),
-            f" + {self.regression.coef_[0][6]:.16f}*F_cpu³"
+            f" + {self.regression.coef_[0][6]:.16f}*F_cpu*(U_user+U_system)"
         ]
         self.equation = "".join(eq_lines)
 
@@ -89,7 +88,7 @@ class Model:
             user_squared = user ** 2
             system_squared = system ** 2
             user_system_squared = user_squared * system_squared
-            frequency_cubed = frequency / (user * system)
+            frequency_cubed = frequency * (user + system)
 
             self.X_actual = np.column_stack([user, system, user_system, user_squared, system_squared, user_system_squared, frequency_cubed])
             self.y_actual = y
