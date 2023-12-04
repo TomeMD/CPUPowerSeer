@@ -31,9 +31,9 @@ def get_threads_timestamps(file):
 
 def set_test_output(test_name, threads):
     if threads != 0:
-        config.test_results_dir = f'{config.output_dir}/test/{test_name}/{threads}'
+        config.test_results_dir = f'{config.test_dir}/{test_name}/{threads}'
     else:
-        config.test_results_dir = f'{config.output_dir}/test/{test_name}'
+        config.test_results_dir = f'{config.test_dir}/{test_name}'
     config.img_dir = f'{config.test_results_dir}/img'
     os.makedirs(config.test_results_dir, exist_ok=True)
     os.makedirs(config.img_dir, exist_ok=True)
@@ -53,28 +53,32 @@ def update_test_model_values(model, time_series):
     model.set_actual_values(X_actual, y_actual)
 
 
-def save_model_results(model, test_time_series=None):
+def save_model_results(model, threads, test_name, test_time_series=None):
 
     expected = model.y_actual if model.y_actual is not None else model.y_test
     predicted = model.y_pred_actual if model.y_pred_actual is not None else model.y_pred
     plot_results(expected, predicted, f'{config.model_name}-results.png')
+
+    # If writing test results with all threads write also to common R2 file
+    model.write_performance(expected, predicted, write_common_file=(threads == 0), test_name=test_name)
+
     # If actual test data is provided plot predicted time series
     if test_time_series is not None:
         predicted_col = predicted.flatten()
         test_time_series['power_predicted'] = predicted_col
         plot_time_series("Predicted Time Series", test_time_series,
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
+
     # If model dimension is 2 it is represented as a polynomial function
     if len(config.x_vars) == 1:
         plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
-    model.write_performance(expected, predicted)
 
 
 def run_test(test_name, time_series, model, threads):
     set_test_output(test_name, threads)
     update_test_model_values(model, time_series)
     model.predict()
-    save_model_results(model, time_series)
+    save_model_results(model, threads, test_name, time_series)
 
 
 def run(model):

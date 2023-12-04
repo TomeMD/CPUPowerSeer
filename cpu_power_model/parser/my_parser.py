@@ -103,7 +103,9 @@ def update_config(args):
     config.test_ts_files_list = args.actual_timestamps_list.split(',')
     config.x_vars = args.model_variables.split(',')
     config.output_dir = args.output
-    config.img_dir = f'{args.output}/train'
+    config.train_dir = f'{args.output}/train'
+    config.test_dir = f'{args.output}/test'
     config.log_file = f'{args.output}/cpu_power_model.log'
     os.makedirs(config.output_dir, exist_ok=True)
-    os.makedirs(config.img_dir, exist_ok=True)
+    os.makedirs(config.train_dir, exist_ok=True)
+    os.makedirs(config.test_dir, exist_ok=True)

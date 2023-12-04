@@ -16,6 +16,12 @@ def generate_monomials(X):
     return monomials
 
 
+def write_r2(r2, test_name):
+    results_file = f'{config.test_dir}/{config.model_name}-results.out'
+    with open(results_file, 'a') as file:
+        file.write(f"{test_name} R2: {r2}\n")
+
+
 class Model:
 
     def __set_train_and_test_data(self, X, y):
@@ -93,14 +99,17 @@ class Model:
             self.X_actual = np.column_stack([user, system, user_system, user_squared, system_squared, user_system_squared, frequency_cubed])
             self.y_actual = y
 
-    def write_performance(self, expected, predicted):
+    def write_performance(self, expected, predicted, write_common_file=False, test_name=None):
         results_file = f'{config.test_results_dir}/{config.model_name}-results.out'
         norm_factor = np.max(expected) - np.min(expected)
         rmse = mean_squared_error(expected, predicted, squared=False)
+        r2 = r2_score(expected, predicted)
         with open(results_file, 'w') as file:
             file.write(f"MODEL NAME: {self.name}\n")
             file.write(f"NRMSE: {rmse/norm_factor}\n")
-            file.write(f"R2 SCORE: {r2_score(expected, predicted)}\n")
+            file.write(f"R2 SCORE: {r2}\n")
             file.write(f"{self.equation}")
             file.write("\n")
+        if write_common_file:
+            write_r2(r2, test_name)
         log(f'Performance report and plots stored at {config.output_dir}')
