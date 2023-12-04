@@ -6,7 +6,7 @@ from cpu_power_model.config import config
 from cpu_power_model.data.model.utils import generate_monomials
 
 
-class DefaultModel:
+class PolynomialModel:
 
     def __init__(self, name):
         self.name = name

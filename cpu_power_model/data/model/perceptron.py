@@ -2,11 +2,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 
-from cpu_power_model.data.model.default import DefaultModel
+from cpu_power_model.data.model.polynomial import PolynomialModel
 from cpu_power_model.config import config
 
 
-class PerceptronModel(DefaultModel):
+class PerceptronModel(PolynomialModel):
 
     def __init__(self, name):
         super().__init__(name)

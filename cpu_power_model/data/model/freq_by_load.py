@@ -1,11 +1,11 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-from cpu_power_model.data.model.default import DefaultModel, generate_monomials
+from cpu_power_model.data.model.polynomial import PolynomialModel, generate_monomials
 from cpu_power_model.config import config
 
 
-class FreqByLoadModel(DefaultModel):
+class FreqByLoadModel(PolynomialModel):
 
     def set_train_and_test_data(self, X, y):
         user = X[:, 0]

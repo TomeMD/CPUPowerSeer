@@ -49,7 +49,7 @@ deactivate
 ## Execution and options
 
 ```shell
-usage: cpu-power-model [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [-m MODEL_VARIABLES] [-a ACTUAL_TIMESTAMPS_LIST] [-o OUTPUT] [-n NAME]
+usage: cpu-power-model [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [--vars VARS] [-p PREDICTION_METHOD] [-a ACTUAL_TIMESTAMPS_LIST] [-o OUTPUT] [-n NAME]
 
 Modeling CPU Power consumption from InfluxDB time series.
 
@@ -65,8 +65,13 @@ options:
                          Example:
                              Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000
                              Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
-  -m MODEL_VARIABLES, --model-variables MODEL_VARIABLES
-                        Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.
+  --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables. 
+                        Supported values: user_load, system_load, wait_load, freq.
+  -p PREDICTION_METHOD, --prediction-method PREDICTION_METHOD
+                        Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:
+                                polynomial      Polynomial Regression with specified variables
+                                freqbyload      Custom Regression using user_load, system_load and freq
+                                perceptron      Multilayer Perceptron
   -a ACTUAL_TIMESTAMPS_LIST, --actual-timestamps-list ACTUAL_TIMESTAMPS_LIST
                         Comma-separated list of files storing time series timestamps from actual values of predictor variables and power to test
                         the model (in same format as train timestamps). If any file is specified train data will be split into train and test data.

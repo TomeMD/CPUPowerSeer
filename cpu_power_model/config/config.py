@@ -10,6 +10,7 @@ img_dir = None
 log_file = None
 model_name = None
 x_vars = None
+prediction_method = None
 train_range = 1.5
 test_range = 1.5
 

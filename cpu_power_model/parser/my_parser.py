@@ -39,12 +39,21 @@ Example:\n \
     )
 
     parser.add_argument(
-        "-m",
-        "--model-variables",
+        "--vars",
         default="load,freq",
-        help="Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.",
+        help="Comma-separated list of variables to use in the regression model. Commonly known as predictor variables. \
+\nSupported values: user_load, system_load, wait_load, freq.",
     )
 
+    parser.add_argument(
+        "-p",
+        "--prediction-method",
+        default="polynomial",
+        help="Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:\n\
+\tpolynomial\tPolynomial Regression with specified variables\n\
+\tfreqbyload\tCustom Regression using user_load, system_load and freq\n\
+\tperceptron\tMultilayer Perceptron",
+    )
     parser.add_argument(
         "-a",
         "--actual-timestamps-list",
@@ -74,9 +83,17 @@ in an orderly manner. By default is 'General'",
 
 def check_x_vars():
     aux = set(config.x_vars) - set(config.supported_vars)
-    if any(var not in config.supported_vars for var in config.x_vars):
+    if aux:
         log(f"{aux} not supported. Supported vars: {config.supported_vars}", "ERR")
         exit(1)
+
+
+def check_prediction_method():
+    if config.prediction_method == "freqbyload":
+        if set(config.x_vars) != {"freq", "user_load", "system_load"}:
+            log(f"Specified vars {config.x_vars} not compatible with prediction method ({config.prediction_method})", "ERR")
+            log(f"{config.prediction_method} can on ly be used with vars [freq, user_load, system_load]", "ERR")
+            exit(1)
 
 
 def check_files():
@@ -91,6 +108,7 @@ def check_files():
 
 def check_config():
     check_x_vars()
+    check_prediction_method()
     check_files()
     check_bucket_exists(config.influxdb_bucket)
 
@@ -101,7 +119,8 @@ def update_config(args):
     config.influxdb_bucket = args.bucket
     config.train_ts_file = args.train_timestamps
     config.test_ts_files_list = args.actual_timestamps_list.split(',')
-    config.x_vars = args.model_variables.split(',')
+    config.x_vars = args.vars.split(',')
+    config.prediction_method = args.prediction_method
     config.output_dir = args.output
     config.train_dir = f'{args.output}/train'
     config.test_dir = f'{args.output}/test'
