@@ -6,6 +6,7 @@ from cpu_power_model.config import config
 from cpu_power_model.logs.logger import log
 from cpu_power_model.data.process import get_timestamp_from_line, get_time_series, get_formatted_vars
 from cpu_power_model.data.plot import plot_time_series, plot_model, plot_results
+from cpu_power_model.data.model.utils import write_performance
 
 
 def get_test_name(file):
@@ -60,11 +61,12 @@ def save_model_results(model, threads, test_name, test_time_series=None):
     plot_results(expected, predicted, f'{config.model_name}-results.png')
 
     # If writing test results with all threads write also to common R2 file
-    model.write_performance(expected, predicted, write_common_file=(threads == 0), test_name=test_name)
+    write_performance(model.name, expected, predicted,
+                      equation=model.equation, write_common_file=(threads == 0), test_name=test_name)
 
     # If actual test data is provided plot predicted time series
     if test_time_series is not None:
-        predicted_col = predicted.flatten()
+        predicted_col = model.y_pred_actual.flatten()
         test_time_series['power_predicted'] = predicted_col
         plot_time_series("Predicted Time Series", test_time_series,
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
@@ -74,10 +76,10 @@ def save_model_results(model, threads, test_name, test_time_series=None):
         plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
 
 
-def run_test(test_name, time_series, model, threads):
+def run_test(model, threads, test_name, time_series):
     set_test_output(test_name, threads)
     update_test_model_values(model, time_series)
-    model.predict()
+    model.test()
     save_model_results(model, threads, test_name, time_series)
 
 
@@ -95,9 +97,9 @@ def run(model):
                 if first:
                     initial_date = time_series_threads["time"].min()
                     first = False
-                run_test(test_name, time_series_threads, model, t[0])
+                run_test(model, t[0], test_name, time_series_threads)
                 test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
-            run_test(test_name, test_time_series, model, 0)
+            run_test(model, 0, test_name, test_time_series)
     else:
-        model.predict()
-        save_model_results(model)
+        model.test()
+        save_model_results(model, 0, "Test Split")
