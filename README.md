@@ -8,16 +8,17 @@ Before using this tool you must configure the InfluxDB server from which the met
 
 ### InfluxDB server
 
-To modify your InfluxDB server simply modify the following code variables:
+To modify your InfluxDB server simply modify the following code variables from `cpu_power_model.influxdb.influxdb_env.py`:
 
 ```python
-influxdb_url = "influxdb-server:port"
-influxdb_token = "your-token"
-influxdb_org = "your-org"
-influxdb_bucket = "your-bucket"
+INFLUXDB_URL = "influxdb-server:port"
+INFLUXDB_TOKEN = "your-token"
+INFLUXDB_ORG = "your-org"
 ```
 
-It is assumed that this server stores Glances and RAPL metrics in a proper format.
+It is assumed that this server stores Glances and RAPL metrics in a proper format. 
+
+*Note: To store this metrics properly see [**TSG_Stress_CPU**](git@github.com:TomeMD/TSG_StressCPU.git).*
 
 ## Installation
 
@@ -82,28 +83,61 @@ options:
 
 Timestamps files must be stored in the following format:
 ```shell
-<EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>
-<EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>
+<EXP-NAME> <TYPE-OF-EXPERIMENT> (CORES = <CORES>) START: <START-DATE>
+<EXP-NAME> <TYPE-OF-EXPERIMENT> (CORES = <CORES>) STOP: <STOP-DATE>
 ```
 With the following meaning:
 - `EXP-NAME`: User desired name.
-- `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and REAL-VALUES if it's a period in which test data was obtained.
-- `DATE-START` and `DATE-STOP`: Timestamp of the beginning or end of the experiment in UTC format `%Y-%m-%d %H:%M:%S%z`.
+- `TYPE-OF-EXPERIMENT`: The type of experiment run during that period. It can take 3 values: STRESS-TEST if it's a stress test, IDLE if it's a period in which the CPU is idle and other if it's a period in which test data was obtained.
+- `CORES`: Comma-separated list of cores used in the experiment.
+- `START-DATE` and `STOP-DATE`: Timestamp of the beginning or end of the experiment in UTC format `%Y-%m-%d %H:%M:%S%z`.
 
 Example:
 ```shell
-Group_P (cores = 0,1) start: 2023-04-21 09:33:53+0000
-Group_P (cores = 0,1) stop: 2023-04-21 09:35:54+0000
-Group_P (cores = 0,1,2,3) start: 2023-04-21 09:36:24+0000
-Group_P (cores = 0,1,2,3) stop: 2023-04-21 09:38:24+0000
-Group_P (cores = 0,1,2,3,4,5) start: 2023-04-21 09:38:54+0000
-Group_P (cores = 0,1,2,3,4,5) stop: 2023-04-21 09:40:54+0000
-Group_P (cores = 0,1,2,3,4,5,6,7) start: 2023-04-21 09:41:24+0000
-Group_P (cores = 0,1,2,3,4,5,6,7) stop: 2023-04-21 09:43:25+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9) start: 2023-04-21 09:43:55+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9) stop: 2023-04-21 09:45:56+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11) start: 2023-04-21 09:46:26+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11) stop: 2023-04-21 09:48:26+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) start: 2023-04-21 09:48:56+0000
-Group_P (cores = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) stop: 2023-04-21 09:50:57+0000
+Group_P STRESS-TEST (CORES = 0,1) START: 2023-04-21 09:33:53+0000
+Group_P STRESS-TEST (CORES = 0,1) STOP: 2023-04-21 09:35:54+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3) START: 2023-04-21 09:36:24+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3) STOP: 2023-04-21 09:38:24+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5) START: 2023-04-21 09:38:54+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5) STOP: 2023-04-21 09:40:54+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7) START: 2023-04-21 09:41:24+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7) STOP: 2023-04-21 09:43:25+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9) START: 2023-04-21 09:43:55+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9) STOP: 2023-04-21 09:45:56+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11) START: 2023-04-21 09:46:26+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11) STOP: 2023-04-21 09:48:26+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) START: 2023-04-21 09:48:56+0000
+Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) STOP: 2023-04-21 09:50:57+0000
 ```
+
+*Note: To obtain timestamps files in proper format see [**TSG_Stress_CPU**](git@github.com:TomeMD/TSG_StressCPU.git).*
+
+## Output
+
+Output will be stored in the specified directory (-o option) or './out' by default. In the output directory you will find 2 subdirectories, train and test, which contains train time series and test/predictions time series along with their results, respectively. The directory tree will have the following appearance:
+
+```shell
+out
+|
+|---- train
+|		|---- <MODEL-NAME>-temperature-data.png					Temperature train time series
+|		|---- <MODEL-NAME>-train-data.png						Model variables train time series
+|
+|
+|---- test
+		|---- <MODEL-NAME>-results.out							Summary of the results obtained with all benchmarks.
+		|---- <BENCHMARK>
+				|---- img
+				|		|---- <MODEL-NAME>-predictions.png		Predicted time series
+                		|---- <MODEL-NAME>-results.png			Expected VS Predicted Points plot
+				|---- <MODEL-NAME>-results.out					Benchmark results
+				|---- <THREADS>
+						|---- img
+						|		|...
+						|---- <MODEL-NAME>-results.png			Benchmark results for a specific number of threads
+```
+
+There will be one subdirectory in benchmark directory for each number of threads used with this benchmark. 
+
+***Note: Don't forget to specify the cores in the timestamps file because cpu-power-model will infer the number of threads/cores used from these files.***
+
