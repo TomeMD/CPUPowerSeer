@@ -83,6 +83,15 @@ def run_test(model, threads, test_name, time_series):
     save_model_results(model, threads, test_name, time_series)
 
 
+def fix_time_units(df, current, prev):
+    if current == "hours" and prev == "seconds":
+        df["time_diff"] = df["time_diff"] / 3600
+    else:
+        df["time_diff"] = df["time_diff"] / 60
+    df["time_unit"] = current
+    return df
+
+
 def run(model):
     if not len(config.test_ts_files_list) == 0:
         for file in config.test_ts_files_list:
@@ -91,12 +100,19 @@ def run(model):
             test_time_series = pd.DataFrame(columns=config.x_vars.copy() + ["power"] + ["time_diff"] + ["time_unit"])
             first = True
             initial_date = None
+            prev_time_unit = None
+            current_time_unit = None
             for t in threads_timestamps:
                 log(f"Running test {test_name} with {t[0]} threads")
                 time_series_threads = get_test_data(t[1], t[2], initial_date)
+                current_time_unit = time_series_threads["time_unit"].iloc[0]
                 if first:
+                    prev_time_unit = current_time_unit
                     initial_date = time_series_threads["time"].min()
                     first = False
+                if current_time_unit != prev_time_unit:
+                    test_time_series = fix_time_units(test_time_series, current_time_unit, prev_time_unit)
+                    prev_time_unit = current_time_unit
                 run_test(model, t[0], test_name, time_series_threads)
                 test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
             run_test(model, 0, test_name, test_time_series)

@@ -1,5 +1,4 @@
 from cpu_power_model.config import config
-from cpu_power_model.logs.logger import log
 from cpu_power_model.data.process import get_idle_consumption, get_formatted_vars
 from cpu_power_model.data.model import PolynomialModel, FreqByLoadModel, PerceptronModel
 
