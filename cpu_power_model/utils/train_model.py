@@ -12,8 +12,6 @@ def run(train_timestamps, time_series):
         model = FreqByLoadModel(config.model_name)
     elif config.prediction_method == "perceptron":
         model = PerceptronModel(config.model_name)
-    else:
-        log(f"Prediction method ({config.prediction_method}) not supported", "ERR")
 
     idle_consumption = get_idle_consumption(train_timestamps, config.train_range)
     X, y = get_formatted_vars(config.x_vars, time_series)

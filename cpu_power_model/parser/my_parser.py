@@ -89,6 +89,11 @@ def check_x_vars():
 
 
 def check_prediction_method():
+    if config.prediction_method not in config.supported_pred_methods:
+        log(f"Prediction method ({config.prediction_method}) not supported", "ERR")
+        log(f"Supported methods: {config.supported_pred_methods}", "ERR")
+        exit(1)
+
     if config.prediction_method == "freqbyload":
         if set(config.x_vars) != {"freq", "user_load", "system_load"}:
             log(f"Specified vars {config.x_vars} not compatible with prediction method ({config.prediction_method})", "ERR")
