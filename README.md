@@ -120,21 +120,26 @@ Output will be stored in the specified directory (-o option) or './out' by defau
 out
 |
 |---- train
-|		|---- <MODEL-NAME>-temperature-data.png						Temperature train time series
-|		|---- <MODEL-NAME>-train-data.png						Model variables train time series
+|	|---- <MODEL-NAME>-temperature-data.png				Temperature train time series
+|	|---- <MODEL-NAME>-train-data.png				Model variables train time series
 |
 |
 |---- test
-		|---- <MODEL-NAME>-results.out							Summary of the results obtained with all benchmarks.
-		|---- <BENCHMARK>
-				|---- img
-				|		|---- <MODEL-NAME>-predictions.png		Predicted time series
-                		|---- <MODEL-NAME>-results.png					Expected VS Predicted Points plot
-				|---- <MODEL-NAME>-results.out					Benchmark results
-				|---- <THREADS>
-						|---- img
-						|		|...
-						|---- <MODEL-NAME>-results.png			Benchmark results for a specific number of threads
+	|---- <MODEL-NAME>-results.out					Summary of the results obtained with all benchmarks.
+	|---- <BENCHMARK>
+		|---- <MODEL-NAME>-results.png				Expected VS Predicted Points plot
+		|---- <MODEL-NAME>-results.out				Benchmark results
+		|---- img
+		|	|---- <MODEL-NAME>-predictions.png		Predicted time series
+		|
+		|---- <1-THREADS>
+		|	|---- img
+		|	|	|...
+		|	|---- <MODEL-NAME>-results.png			Benchmark results for a specific number of threads
+		|
+		|...
+		|
+		|---- <n-THREADS>
 ```
 
 There will be one subdirectory in benchmark directory for each number of threads used with this benchmark. 
