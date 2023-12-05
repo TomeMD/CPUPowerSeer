@@ -24,19 +24,6 @@ class FreqByLoadModel(PolynomialModel):
         self.X_test = X_test
         self.y_test = y_test
 
-    def set_equation(self, idle_consumption):
-        names_list = [config.x_var_eq[var] for var in config.x_vars if var != 'freq']
-        eq_lines = [
-            f"IDLE CONSUMPTION: {idle_consumption:.0f} J\n",
-            f"EQUATION: y = {self.model.intercept_[0]:.0f}",
-            *(
-                f" + {self.model.coef_[0][i+1]:.8f}*{name}"
-                for i, name in enumerate(generate_monomials(names_list))
-            ),
-            f" + {self.model.coef_[0][6]:.16f}*F_cpu*(U_user+U_system)"
-        ]
-        self.equation = "".join(eq_lines)
-
     def set_actual_values(self, X, y):
         if X is not None and y is not None:
             user = X[:, 0]
@@ -51,3 +38,16 @@ class FreqByLoadModel(PolynomialModel):
             self.X_actual = np.column_stack([user, system, user_system,
                                              user_squared, system_squared, user_system_squared, freq_user_system])
             self.y_actual = y
+
+    def set_equation(self, idle_consumption):
+        names_list = [config.x_var_eq[var] for var in config.x_vars if var != 'freq']
+        eq_lines = [
+            f"IDLE CONSUMPTION: {idle_consumption:.0f} J\n",
+            f"EQUATION: y = {self.model.intercept_[0]:.0f}",
+            *(
+                f" + {self.model.coef_[0][i+1]:.8f}*{name}"
+                for i, name in enumerate(generate_monomials(names_list))
+            ),
+            f" + {self.model.coef_[0][6]:.16f}*F_cpu*(U_user+U_system)"
+        ]
+        self.equation = "".join(eq_lines)
