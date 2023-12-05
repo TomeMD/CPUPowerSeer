@@ -120,7 +120,7 @@ Output will be stored in the specified directory (-o option) or './out' by defau
 out
 |
 |---- train
-|		|---- <MODEL-NAME>-temperature-data.png					Temperature train time series
+|		|---- <MODEL-NAME>-temperature-data.png						Temperature train time series
 |		|---- <MODEL-NAME>-train-data.png						Model variables train time series
 |
 |
@@ -129,7 +129,7 @@ out
 		|---- <BENCHMARK>
 				|---- img
 				|		|---- <MODEL-NAME>-predictions.png		Predicted time series
-                		|---- <MODEL-NAME>-results.png			Expected VS Predicted Points plot
+                		|---- <MODEL-NAME>-results.png					Expected VS Predicted Points plot
 				|---- <MODEL-NAME>-results.out					Benchmark results
 				|---- <THREADS>
 						|---- img
