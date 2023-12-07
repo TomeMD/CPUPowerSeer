@@ -57,32 +57,27 @@ deactivate
 ## Execution and options
 
 ```shell
-usage: cpu-power-model [-h] [-v] [-b BUCKET] [-t TRAIN_TIMESTAMPS] [--vars VARS] [-p PREDICTION_METHOD] [-a ACTUAL_TIMESTAMPS_LIST] [-o OUTPUT] [-n NAME]
+usage: cpu-power-model [-h] [-v] --vars VARS -t TRAIN_TIMESTAMPS [-a ACTUAL_TIMESTAMPS_LIST] [-p PREDICTION_METHOD] [-b BUCKET] [-o OUTPUT] [-n NAME]
 
 Modeling CPU Power consumption from InfluxDB time series.
 
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
-  -b BUCKET, --bucket BUCKET
-                        InfluxDB Bucket to retrieve data from.
-  -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
-                        File storing time series timestamps from train data. Timestamps must be stored in the following format:
-                             <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-START>
-                             <EXP-NAME> <TYPE-OF-EXPERIMENT> ... <DATE-STOP>
-                         Example:
-                             Spread_P&L STRESS-TEST (cores = 0,16) start: 2023-04-18 14:26:01+0000
-                             Spread_P&L STRESS-TEST (cores = 0,16) stop: 2023-04-18 14:28:01+0000
-  --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables. 
+  --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.
                         Supported values: user_load, system_load, wait_load, freq.
+  -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
+                        File storing time series timestamps from train data in proper format. Check README.md to see timestamps proper format.
+  -a ACTUAL_TIMESTAMPS_LIST, --actual-timestamps-list ACTUAL_TIMESTAMPS_LIST
+                        Comma-separated list of files storing time series timestamps from actual values of predictor variables and power to test
+                        the model (in same format as train timestamps). If any file is specified train data will be split into train and test data.
   -p PREDICTION_METHOD, --prediction-method PREDICTION_METHOD
                         Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:
                                 polynomial      Polynomial Regression with specified variables
                                 freqbyload      Custom Regression using user_load, system_load and freq
                                 perceptron      Multilayer Perceptron
-  -a ACTUAL_TIMESTAMPS_LIST, --actual-timestamps-list ACTUAL_TIMESTAMPS_LIST
-                        Comma-separated list of files storing time series timestamps from actual values of predictor variables and power to test
-                        the model (in same format as train timestamps). If any file is specified train data will be split into train and test data.
+  -b BUCKET, --bucket BUCKET
+                        InfluxDB Bucket to retrieve data from. By default is 'mybucket'.
   -o OUTPUT, --output OUTPUT
                         Directory to save time series plots and results. By default is './out'.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'General'
@@ -126,30 +121,29 @@ Output will be stored in the specified directory (-o option) or './out' by defau
 ```shell
 out
 |
-|---- train
-|	|---- <MODEL-NAME>-temperature-data.png				Temperature train time series
-|	|---- <MODEL-NAME>-train-data.png				Model variables train time series
+├─── train
+|	├─── <MODEL-NAME>-temperature-data.png				Temperature train time series
+|	└─── <MODEL-NAME>-train-data.png				Model variables train time series
 |
 |
-|---- test
-	|---- <MODEL-NAME>-results.out					Summary of the results obtained with all benchmarks.
-	|---- <BENCHMARK>
-		|---- <MODEL-NAME>-results.png				Expected VS Predicted Points plot
-		|---- <MODEL-NAME>-results.out				Benchmark results
-		|---- img
-		|	|---- <MODEL-NAME>-predictions.png		Predicted time series
+└─── test
+	├─── <MODEL-NAME>-summary.out					Summary of the results obtained with all benchmarks.
+	└─── <BENCHMARK>
+		├─── <MODEL-NAME>-results.out				Benchmark results
+		├─── img
+		|	├─── <MODEL-NAME>-results.png			Expected VS Predicted Points plot
+		|	└─── <MODEL-NAME>-predictions.png		Predicted time series
 		|
-		|---- <1-THREADS>
-		|	|---- img
-		|	|	|...
-		|	|---- <MODEL-NAME>-results.png			Benchmark results for a specific number of threads
+		├─── <THREADS[0]>
+		|	├─── <MODEL-NAME>-results.png			Benchmark results with <THREADS[0]> threads
+		|	└─── img
+		|		├─── <MODEL-NAME>-results.png		Expected VS Predicted Points plot with <THREADS[0]> threads
+		|		└─── <MODEL-NAME>-predictions.png	Predicted time series with <THREADS[0]> threads
+		├─── ...
 		|
-		|...
-		|
-		|---- <n-THREADS>
+		└─── <THREADS[n]>
 ```
 
 There will be one subdirectory in benchmark directory for each number of threads used with this benchmark. 
 
 ***Note: Don't forget to specify the cores in the timestamps file because cpu-power-model will infer the number of threads/cores used from these files.***
-

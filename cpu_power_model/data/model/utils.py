@@ -15,7 +15,7 @@ def generate_monomials(X):
 
 
 def write_r2(r2, test_name):
-    results_file = f'{config.test_dir}/{config.model_name}-results.out'
+    results_file = f'{config.test_dir}/{config.model_name}-summary.out'
     with open(results_file, 'a') as file:
         file.write(f"{test_name} R2: {r2}\n")
 

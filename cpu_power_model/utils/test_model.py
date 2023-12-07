@@ -21,6 +21,7 @@ def get_threads_timestamps(file):
             lines = f.readlines()
     except FileNotFoundError:
         log(f"Error while parsing timestamps (file doesn't exists): {file}", "ERR")
+        return []
     threads_timestamps = []
     for i in range(0, len(lines), 2):
         start_line = lines[i]
@@ -31,10 +32,8 @@ def get_threads_timestamps(file):
 
 
 def set_test_output(test_name, threads):
-    if threads != 0:
-        config.test_results_dir = f'{config.test_dir}/{test_name}/{threads}'
-    else:
-        config.test_results_dir = f'{config.test_dir}/{test_name}'
+    config.test_results_dir = f'{config.test_dir}/{test_name}/{threads}' if threads != 0 \
+        else f'{config.test_dir}/{test_name}'
     config.img_dir = f'{config.test_results_dir}/img'
     os.makedirs(config.test_results_dir, exist_ok=True)
     os.makedirs(config.img_dir, exist_ok=True)
@@ -66,8 +65,7 @@ def save_model_results(model, threads, test_name, test_time_series=None):
 
     # If actual test data is provided plot predicted time series
     if test_time_series is not None:
-        predicted_col = model.y_pred_actual.flatten()
-        test_time_series['power_predicted'] = predicted_col
+        test_time_series['power_predicted'] = model.y_pred_actual.flatten()
         plot_time_series("Predicted Time Series", test_time_series,
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
 
@@ -89,11 +87,12 @@ def fix_time_units(df, current, prev):
     else:
         df["time_diff"] = df["time_diff"] / 60
     df["time_unit"] = current
+    log(f"Test time series time units have been modified from {prev} to {current}", "WARN")
     return df
 
 
 def run(model):
-    if not len(config.test_ts_files_list) == 0:
+    if config.test_ts_files_list is not None:
         for file in config.test_ts_files_list:
             test_name = get_test_name(file)
             threads_timestamps = get_threads_timestamps(file)
@@ -101,7 +100,6 @@ def run(model):
             first = True
             initial_date = None
             prev_time_unit = None
-            current_time_unit = None
             for t in threads_timestamps:
                 log(f"Running test {test_name} with {t[0]} threads")
                 time_series_threads = get_test_data(t[1], t[2], initial_date)
@@ -117,5 +115,6 @@ def run(model):
                 test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
             run_test(model, 0, test_name, test_time_series)
     else:
+        set_test_output("test_split", 0)
         model.test()
         save_model_results(model, 0, "Test Split")
