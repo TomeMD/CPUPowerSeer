@@ -2,6 +2,12 @@
 
 This tool builds a model to predict CPU power consumption from different CPU variables (Utilization, Frequency,...) using InfluxDB time series.
 
+- [Configuration](#configuration)
+- [Installation](#installation)
+- [Execution and options](#execution)
+- [Output](#output)
+
+<a name="configuration"></a>
 ## Configuration
 
 Before using this tool you must configure the InfluxDB server from which the metrics will be exported, as well as the timestamps of the time series you want to obtain from that server.
@@ -18,8 +24,9 @@ INFLUXDB_ORG = "your-org"
 
 It is assumed that this server stores Glances and RAPL metrics in a proper format. 
 
-*Note: To store this metrics properly see [**TSG_Stress_CPU**](git@github.com:TomeMD/TSG_StressCPU.git).*
+*Note: To store this metrics properly see [**TSG_Stress_CPU**](https://github.com/TomeMD/TSG_StressCPU.git).*
 
+<a name="installation"></a>
 ## Installation
 
 First of all, you can (and should) create a virtual environment by running:
@@ -46,7 +53,7 @@ Finally, when you no longer want to use cpu-power-model, you can deactivate your
 ``` 
 deactivate
 ```
-
+<a name="execution"></a>
 ## Execution and options
 
 ```shell
@@ -110,8 +117,8 @@ Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) START: 2023-04-21 
 Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) STOP: 2023-04-21 09:50:57+0000
 ```
 
-*Note: To obtain timestamps files in proper format see [**TSG_Stress_CPU**](git@github.com:TomeMD/TSG_StressCPU.git).*
-
+*Note: To obtain timestamps files in proper format see [**TSG_Stress_CPU**](https://github.com/TomeMD/TSG_StressCPU.git).*
+<a name="output"></a>
 ## Output
 
 Output will be stored in the specified directory (-o option) or './out' by default. In the output directory you will find 2 subdirectories, train and test, which contains train time series and test/predictions time series along with their results, respectively. The directory tree will have the following appearance:
