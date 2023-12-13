@@ -45,9 +45,10 @@ class FreqByLoadModel(PolynomialModel):
             f"IDLE CONSUMPTION: {idle_consumption:.0f} J\n",
             f"EQUATION: y = {self.model.intercept_[0]:.0f}",
             *(
-                f" + {self.model.coef_[0][i+1]:.8f}*{name}"
+                f" + {self.model.coef_[0][i]:.8f}*{name}"
                 for i, name in enumerate(generate_monomials(names_list))
             ),
+            f" + {self.model.coef_[0][5]:.16f}*U_user²*U_system²",
             f" + {self.model.coef_[0][6]:.16f}*F_cpu*(U_user+U_system)"
         ]
         self.equation = "".join(eq_lines)
