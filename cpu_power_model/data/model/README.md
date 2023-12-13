@@ -1,5 +1,5 @@
 # Model
-Python module to implement CPU power models. To implement new models, create a class that inherits from Model (model.py) and implements the following methods:
+Python module to implement CPU power models. To implement new models, complete CustomModel class by implementing at least the following methods:
 
 - **set_train_and_test_data(self, X, y)**: Format X and Y to fits your model. Then assign the values you finally obtain to self.X_train, self.y_train, self.X_test = X_test and self.y_test.
 - **set_actual_values(self, X, y)**: Set actual values in the same format as training and test values.

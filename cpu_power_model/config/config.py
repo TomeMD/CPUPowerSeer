@@ -15,7 +15,7 @@ train_range = 1.5
 test_range = 1.5
 
 supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "temp"]
-supported_pred_methods = ["polynomial", "freqbyload", "perceptron"]
+supported_pred_methods = ["polynomial", "freqbyload", "perceptron", "custom"]
 
 x_var_label = {
     "load": "Utilization (%)",
