@@ -39,14 +39,16 @@ def set_legend(ax1, ax2):
 def plot_time_series(title, df, x_vars, filename, show_predictions=False):
     fig, ax1 = plt.subplots(figsize=(14, 6))
     ax2 = ax1.twinx()
+
     # Plot 1 line for each predictor variable (Left Axis: ax1)
     for var in x_vars:
         set_line_plot(df["time_diff"], df[var], ax1, config.x_var_color[var], config.x_var_label[var])
     # Plot dependent variable "power" (Right Axis: ax2)
-    set_line_plot(df["time_diff"], df["power"], ax2, 'tab:orange', "Power Consumption (W)")
+    set_line_plot(df["time_diff"], df["power"], ax2, config.x_var_color["power"], "Power Consumption (W)")
     # Plot predicted power if provided (Right Axis: ax2)
     if show_predictions:
-        set_line_plot(df["time_diff"], df["power_predicted"], ax2, 'tab:green', "Predicted Power Consumption (W)", "dashed")
+        set_line_plot(df["time_diff"], df["power_predicted"], ax2, config.x_var_color["power_predicted"],
+                      "Predicted Power Consumption (W)", "dashed")
     set_basic_labels(title, f"Time ({df['time_unit'].iloc[0]})", "CPU Model Variables", ax1)
     set_basic_labels(None, None, "Power Consumption (W)", ax2)
     set_legend(ax1, ax2)

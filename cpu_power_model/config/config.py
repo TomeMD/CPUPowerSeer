@@ -36,10 +36,12 @@ x_var_eq = {
 }
 
 x_var_color = {
-    "load": "tab:blue",
-    "user_load": "tab:blue",
-    "system_load": "tab:purple",
-    "wait_load": "tab:pink",
-    "freq": "tab:red",
-    "temp": "tab:pink"
+    "load": "#2b83ba",
+    "user_load": "#2b83ba",
+    "system_load": "#d7191c",
+    "wait_load": "#ffffbf",
+    "freq": "#abdda4",
+    "temp": "#f781bf",
+    "power": "#fdae61",
+    "power_predicted": "#fdae61"
 }
