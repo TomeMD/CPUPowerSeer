@@ -1,6 +1,6 @@
 from cpu_power_model.config import config
 from cpu_power_model.data.process import get_idle_consumption, get_formatted_vars
-from cpu_power_model.data.model import PolynomialModel, FreqByLoadModel, PerceptronModel, CustomModel
+from cpu_power_model.data.model import PolynomialModel, FreqWoInteractionTerms, PerceptronModel, CustomModel
 
 
 def run(train_timestamps, time_series):
@@ -8,7 +8,7 @@ def run(train_timestamps, time_series):
     if config.prediction_method == "polynomial":
         model = PolynomialModel(config.model_name)
     elif config.prediction_method == "freqbyload":
-        model = FreqByLoadModel(config.model_name)
+        model = FreqWoInteractionTerms(config.model_name)
     elif config.prediction_method == "perceptron":
         model = PerceptronModel(config.model_name)
     elif config.prediction_method == "custom":

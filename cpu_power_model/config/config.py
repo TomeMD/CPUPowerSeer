@@ -14,7 +14,7 @@ prediction_method = None
 train_range = 1.5
 test_range = 1.5
 
-supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "temp"]
+supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "sumfreq", "temp"]
 supported_pred_methods = ["polynomial", "freqbyload", "perceptron", "custom"]
 
 x_var_label = {
@@ -22,17 +22,11 @@ x_var_label = {
     "user_load": "User Utilization (%)",
     "system_load": "System Utilization (%)",
     "wait_load": "IO Wait Utilization (%)",
-    "freq": "Frequency (MHz)",
-    "temp": "Temperature Cº"
-}
-
-x_var_eq = {
-    "load": "U_cpu",
-    "user_load": "U_user",
-    "system_load": "U_system",
-    "wait_load": "U_wait",
-    "freq": "F_cpu",
-    "temp": "T_cpu"
+    "freq": "Avg Frequency (MHz)",
+    "sumfreq": "Sum Frequency (MHz)",
+    "temp": "Temperature Cº",
+    "power": "Power Consumption (W)",
+    "power_predicted": "Predicted Power Consumption (W)"
 }
 
 x_var_color = {
@@ -41,7 +35,31 @@ x_var_color = {
     "system_load": "#d7191c",
     "wait_load": "#ffffbf",
     "freq": "#abdda4",
+    "sumfreq": "#abdda4",
     "temp": "#f781bf",
     "power": "#fdae61",
     "power_predicted": "#fdae61"
+}
+
+x_var_marker = {
+    "load": "o",
+    "user_load": "o",
+    "system_load": "s",
+    "wait_load": "d",
+    "freq": "X",
+    "sumfreq": "X",
+    "temp": None,
+    "power": None,
+    "power_predicted": None
+}
+
+x_var_eq = {
+    "load": "U_cpu",
+    "user_load": "U_user",
+    "system_load": "U_system",
+    "wait_load": "U_wait",
+    "freq": "F_avg",
+    "sumfreq": "F_sum",
+    "custom_freq": "F_cpu*(U_user+U_system)",
+    "temp": "T_cpu"
 }

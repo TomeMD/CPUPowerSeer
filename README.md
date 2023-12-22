@@ -65,7 +65,7 @@ options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
   --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.
-                        Supported values: user_load, system_load, wait_load, freq.
+                        Supported values: user_load, system_load, wait_load, freq, sumfreq.
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
                         File storing time series timestamps from train data in proper format. Check README.md to see timestamps proper format.
   -a ACTUAL_TIMESTAMPS_LIST, --actual-timestamps-list ACTUAL_TIMESTAMPS_LIST
@@ -73,9 +73,9 @@ options:
                         the model (in same format as train timestamps). If any file is specified train data will be split into train and test data.
   -p PREDICTION_METHOD, --prediction-method PREDICTION_METHOD
                         Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:
-                                polynomial      Polynomial Regression with specified variables
-                                freqbyload      Custom Regression using user_load, system_load and freq
-                                perceptron      Multilayer Perceptron
+                                polynomial                      Polynomial Regression with specified variables
+                                freqwointeractionterms          Custom Regression using user_load, system_load and freq or sumfreq
+                                perceptron                      Multilayer Perceptron
   -b BUCKET, --bucket BUCKET
                         InfluxDB Bucket to retrieve data from. By default is 'mybucket'.
   -o OUTPUT, --output OUTPUT

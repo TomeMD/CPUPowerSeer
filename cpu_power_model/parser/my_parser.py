@@ -25,7 +25,7 @@ def create_parser():
         "--vars",
         required=True,
         help="Comma-separated list of variables to use in the regression model. Commonly known as predictor variables. \
-\nSupported values: user_load, system_load, wait_load, freq.",
+\nSupported values: user_load, system_load, wait_load, freq, sumfreq.",
     )
 
     parser.add_argument(
@@ -51,9 +51,9 @@ into train and test data.",
         "--prediction-method",
         default="polynomial",
         help="Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:\n\
-\tpolynomial\tPolynomial Regression with specified variables\n\
-\tfreqbyload\tCustom Regression using user_load, system_load and freq\n\
-\tperceptron\tMultilayer Perceptron",
+\tpolynomial\t\t\tPolynomial Regression with specified variables\n\
+\tfreqwointeractionterms\t\tCustom Regression using user_load, system_load and freq or sumfreq\n\
+\tperceptron\t\t\tMultilayer Perceptron",
     )
 
     parser.add_argument(
@@ -94,21 +94,22 @@ def check_prediction_method():
         log(f"Supported methods: {config.supported_pred_methods}", "ERR")
         exit(1)
 
-    if config.prediction_method == "freqbyload":
-        if set(config.x_vars) != {"freq", "user_load", "system_load"}:
+    if config.prediction_method == "freqwointeractionterms":
+        if set(config.x_vars) != {"freq", "user_load", "system_load"} \
+                and set(config.x_vars) != {"sumfreq", "user_load", "system_load"}:
             log(f"Specified vars {config.x_vars} not compatible with prediction method ({config.prediction_method})", "ERR")
-            log(f"{config.prediction_method} can only be used with vars [freq, user_load, system_load]", "ERR")
+            log(f"{config.prediction_method} can only be used with vars [freq || sumfreq, user_load, system_load]", "ERR")
             exit(1)
 
 
 def check_files():
     if not os.path.exists(config.train_ts_file):
-        log(f"Specified non existent train timestamps file: {config.train_ts_file}.", "ERR")
+        log(f"Specified non existent train timestamps file: {config.train_ts_file}", "ERR")
         exit(1)
     if config.test_ts_files_list is not None:
         for file in config.test_ts_files_list:
             if not os.path.exists(file):
-                log(f"Specified non existent file in actual timestamps files list: {file}.", "ERR")
+                log(f"Specified non existent file in actual timestamps files list: {file}", "ERR")
                 exit(1)
 
 
