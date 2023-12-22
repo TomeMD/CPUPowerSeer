@@ -15,7 +15,7 @@ train_range = 1.5
 test_range = 1.5
 
 supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "sumfreq", "temp"]
-supported_pred_methods = ["polynomial", "freqbyload", "perceptron", "custom"]
+supported_pred_methods = ["polynomial", "freqwointeractionterms", "perceptron", "custom"]
 
 x_var_label = {
     "load": "Utilization (%)",
@@ -32,13 +32,13 @@ x_var_label = {
 x_var_color = {
     "load": "#2b83ba",
     "user_load": "#2b83ba",
-    "system_load": "#d7191c",
+    "system_load": "#5e3c99",
     "wait_load": "#ffffbf",
-    "freq": "#abdda4",
-    "sumfreq": "#abdda4",
+    "freq": "#d7191c",
+    "sumfreq": "#d7191c",
     "temp": "#f781bf",
     "power": "#fdae61",
-    "power_predicted": "#fdae61"
+    "power_predicted": "#abdda4"
 }
 
 x_var_marker = {

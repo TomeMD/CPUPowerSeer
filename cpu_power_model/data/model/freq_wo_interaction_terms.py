@@ -7,7 +7,7 @@ from cpu_power_model.config import config
 
 class FreqWoInteractionTerms(PolynomialModel):
     def __init__(self, name):
-        super.__init__(name)
+        super().__init__(name)
         if "freq" in config.x_vars:
             self.freq_var = "custom_freq"
         elif "sumfreq" in config.x_vars:
@@ -17,7 +17,7 @@ class FreqWoInteractionTerms(PolynomialModel):
         if self.freq_var == "custom_freq":
             return frequency * (user + system)
         elif self.freq_var == "sumfreq":
-            return frequency / 1000000
+            return frequency
 
     def set_train_and_test_data(self, X, y):
             user = X[:, 0]

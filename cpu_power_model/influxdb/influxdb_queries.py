@@ -50,7 +50,8 @@ sumfreq_query = '''
         |> range(start: {start_date}, stop: {stop_date})
         |> filter(fn: (r) => r["_measurement"] == "cpu_frequency")
         |> filter(fn: (r) => r["_field"] == "sum" )
-        |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)'''
+        |> aggregateWindow(every: {influxdb_window}, fn: mean, createEmpty: false)
+        |> map(fn: (r) => ({ r with _value: r._value / 1000.0 }))'''
 
 power_query = '''
     from(bucket: "{influxdb_bucket}")

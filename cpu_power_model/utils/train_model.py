@@ -7,7 +7,7 @@ def run(train_timestamps, time_series):
     model = None
     if config.prediction_method == "polynomial":
         model = PolynomialModel(config.model_name)
-    elif config.prediction_method == "freqbyload":
+    elif config.prediction_method == "freqwointeractionterms":
         model = FreqWoInteractionTerms(config.model_name)
     elif config.prediction_method == "perceptron":
         model = PerceptronModel(config.model_name)
