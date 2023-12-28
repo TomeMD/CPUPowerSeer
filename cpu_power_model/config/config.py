@@ -38,7 +38,7 @@ x_var_color = {
     "sumfreq": "#d7191c",
     "temp": "#f781bf",
     "power": "#fdae61",
-    "power_predicted": "#abdda4"
+    "power_predicted": "#008837"
 }
 
 x_var_marker = {
