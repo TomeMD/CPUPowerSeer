@@ -1,6 +1,6 @@
-from cpu_power_model.config import config
-from cpu_power_model.data.process import parse_timestamps, get_time_series
-from cpu_power_model.logs.logger import log
+from comets.config import config
+from comets.data.process import parse_timestamps, get_time_series
+from comets.logs.logger import log
 
 
 def run():

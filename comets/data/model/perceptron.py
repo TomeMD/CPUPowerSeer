@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 
-from cpu_power_model.data.model.model import Model
+from comets.data.model.model import Model
 
 
 class PerceptronModel(Model):

@@ -1,5 +1,5 @@
-from cpu_power_model.data.model.model import Model
-from cpu_power_model.logs.logger import log
+from comets.data.model.model import Model
+from comets.logs.logger import log
 
 
 class CustomModel(Model):

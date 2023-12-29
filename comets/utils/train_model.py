@@ -1,6 +1,6 @@
-from cpu_power_model.config import config
-from cpu_power_model.data.process import get_idle_consumption, get_formatted_vars
-from cpu_power_model.data.model import PolynomialModel, FreqWoInteractionTerms, PerceptronModel, CustomModel
+from comets.config import config
+from comets.data.process import get_idle_consumption, get_formatted_vars
+from comets.data.model import PolynomialModel, FreqWoInteractionTerms, PerceptronModel, CustomModel
 
 
 def run(train_timestamps, time_series):

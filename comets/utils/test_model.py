@@ -2,11 +2,11 @@ import os
 import re
 import pandas as pd
 
-from cpu_power_model.config import config
-from cpu_power_model.logs.logger import log
-from cpu_power_model.data.process import get_timestamp_from_line, get_time_series, get_formatted_vars
-from cpu_power_model.data.plot import plot_time_series, plot_model, plot_results
-from cpu_power_model.data.model.utils import write_performance
+from comets.config import config
+from comets.logs.logger import log
+from comets.data.process import get_timestamp_from_line, get_time_series, get_formatted_vars
+from comets.data.plot import plot_time_series, plot_model, plot_results
+from comets.data.model.utils import write_performance
 
 
 def get_test_name(file):

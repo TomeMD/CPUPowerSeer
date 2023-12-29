@@ -1,4 +1,4 @@
-# CPU Power Consumption Modeling
+# COMETS: CPU Power Modeling from Time Series
 
 This tool builds a model to predict CPU power consumption from different CPU variables (Utilization, Frequency,...) using InfluxDB time series.
 
@@ -14,7 +14,7 @@ Before using this tool you must configure the InfluxDB server from which the met
 
 ### InfluxDB server
 
-To modify your InfluxDB server simply modify the following code variables from `cpu_power_model.influxdb.influxdb_env.py`:
+To modify your InfluxDB server simply modify the following code variables from `comets.influxdb.influxdb_env.py`:
 
 ```python
 INFLUXDB_URL = "influxdb-server:port"
@@ -24,7 +24,7 @@ INFLUXDB_ORG = "your-org"
 
 It is assumed that this server stores Glances and RAPL metrics in a proper format. 
 
-*Note: To store this metrics properly see [**TSG_Stress_CPU**](https://github.com/TomeMD/TSG_StressCPU.git).*
+*Note: To store this metrics properly see [**CROWDS**](https://github.com/TomeMD/crowds.git).*
 
 <a name="installation"></a>
 ## Installation
@@ -48,7 +48,7 @@ If you only want to install the project dependencies, run:
 pip install -r requirements.txt
 ```
 
-Finally, when you no longer want to use cpu-power-model, you can deactivate your virtual environment by running:
+Finally, when you no longer want to use COMETS, you can deactivate your virtual environment by running:
 
 ``` 
 deactivate
@@ -57,9 +57,9 @@ deactivate
 ## Execution and options
 
 ```shell
-usage: cpu-power-model [-h] [-v] --vars VARS -t TRAIN_TIMESTAMPS [-a ACTUAL_TIMESTAMPS_LIST] [-p PREDICTION_METHOD] [-b BUCKET] [-o OUTPUT] [-n NAME]
+usage: comets [-h] [-v] --vars VARS -t TRAIN_TIMESTAMPS [-a ACTUAL_TIMESTAMPS_LIST] [-p PREDICTION_METHOD] [-b BUCKET] [-o OUTPUT] [-n NAME]
 
-Modeling CPU Power consumption from InfluxDB time series.
+CPU Power Modeling from Time Series.
 
 options:
   -h, --help            show this help message and exit
@@ -112,7 +112,7 @@ Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) START: 2023-04-21 
 Group_P STRESS-TEST (CORES = 0,1,2,3,4,5,6,7,8,9,10,11,12,13) STOP: 2023-04-21 09:50:57+0000
 ```
 
-*Note: To obtain timestamps files in proper format see [**TSG_Stress_CPU**](https://github.com/TomeMD/TSG_StressCPU.git).*
+*Note: To obtain timestamps files in proper format see [**CROWDS**](https://github.com/TomeMD/crowds.git).*
 <a name="output"></a>
 ## Output
 
@@ -146,4 +146,4 @@ out
 
 There will be one subdirectory in benchmark directory for each number of threads used with this benchmark. 
 
-***Note: Don't forget to specify the cores in the timestamps file because cpu-power-model will infer the number of threads/cores used from these files.***
+***Note: Don't forget to specify the cores in the timestamps file because COMETS will infer the number of threads/cores used from these files.***

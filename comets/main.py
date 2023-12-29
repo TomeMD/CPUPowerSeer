@@ -1,4 +1,4 @@
-from cpu_power_model import utils
+from comets import utils
 
 
 def main():

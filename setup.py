@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='cpu_power_model',
+    name='comets',
     version='0.1',
-    description='Modeling CPU Power Consumption from InfluxDB Time Series',
+    description='CPU Power Modeling from Time Series.',
     author='Tomé Maseda',
     author_email='tome.maseda@udc.es',
     packages=find_packages(),
@@ -18,7 +18,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'cpu-power-model = cpu_power_model.main:main',
+            'comets = comets.main:main',
         ],
     },
 )

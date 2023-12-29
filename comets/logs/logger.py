@@ -1,7 +1,7 @@
 import datetime
 from termcolor import colored
 
-from cpu_power_model.config import config
+from comets.config import config
 
 
 def print_header():

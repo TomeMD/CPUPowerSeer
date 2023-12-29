@@ -1,8 +1,8 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-from cpu_power_model.data.model.polynomial import PolynomialModel, generate_monomials
-from cpu_power_model.config import config
+from comets.data.model.polynomial import PolynomialModel, generate_monomials
+from comets.config import config
 
 
 class FreqWoInteractionTerms(PolynomialModel):
