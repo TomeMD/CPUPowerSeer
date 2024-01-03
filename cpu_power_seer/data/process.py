@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from comets.config import config
-from comets.logs.logger import log
-from comets.influxdb.influxdb_queries import var_query
-from comets.influxdb.influxdb import query_influxdb
+from cpu_power_seer.config import config
+from cpu_power_seer.logs.logger import log
+from cpu_power_seer.influxdb.influxdb_queries import var_query
+from cpu_power_seer.influxdb.influxdb import query_influxdb
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 

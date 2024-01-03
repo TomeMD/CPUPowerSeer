@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, AutoDateLocator
 from matplotlib.lines import Line2D
 
-from comets.config import config
+from cpu_power_seer.config import config
 
 
 # It is assumed there's one key per value (config.py dicts)

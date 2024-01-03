@@ -2,9 +2,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
-from comets.config import config
-from comets.data.model.utils import generate_monomials
-from comets.data.model.model import Model
+from cpu_power_seer.config import config
+from cpu_power_seer.data.model.utils import generate_monomials
+from cpu_power_seer.data.model.model import Model
 
 
 class PolynomialModel(Model):

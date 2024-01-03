@@ -1,8 +1,8 @@
 from sklearn.metrics import mean_squared_error, r2_score, max_error, mean_absolute_error, mean_absolute_percentage_error
 import numpy as np
 
-from comets.config import config
-from comets.logs.logger import log
+from cpu_power_seer.config import config
+from cpu_power_seer.logs.logger import log
 
 
 def r2_adj_score(expected, predicted, r2=None):

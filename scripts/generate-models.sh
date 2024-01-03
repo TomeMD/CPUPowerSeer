@@ -57,7 +57,7 @@ for MODEL in "${MODEL_NAMES[@]}"; do
           OUT_DIR=out/${MODEL}/${NODE}/${TRAIN_LOAD}_${TRAIN_LOAD_EXECUTION}-${CORES_DISTRIBUTION}/${TEST_LOAD}_${TEST_LOAD_EXECUTION}
           TRAIN_FILE="${TRAIN_DIR}/${CORES_DISTRIBUTION}.timestamps"
           rm -rf "${OUT_DIR}"
-          comets -b "${BUCKET}" -n "${CORES_DISTRIBUTION}" -p ${PREDICTION_METHOD} --vars "${VARS}" -t "${TRAIN_FILE}" -o "${OUT_DIR}" -a "${TEST_FILES}"
+          powerseer -b "${BUCKET}" -n "${CORES_DISTRIBUTION}" -p ${PREDICTION_METHOD} --vars "${VARS}" -t "${TRAIN_FILE}" -o "${OUT_DIR}" -a "${TEST_FILES}"
       done
     done
   done

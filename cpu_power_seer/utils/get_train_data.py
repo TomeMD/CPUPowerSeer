@@ -1,6 +1,6 @@
-from comets.config import config
-from comets.data.process import parse_timestamps, get_time_series
-from comets.logs.logger import log
+from cpu_power_seer.config import config
+from cpu_power_seer.data.process import parse_timestamps, get_time_series
+from cpu_power_seer.logs.logger import log
 
 
 def run():

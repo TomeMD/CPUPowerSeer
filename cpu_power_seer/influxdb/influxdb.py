@@ -3,8 +3,8 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.warnings import MissingPivotFunction
 from urllib3.exceptions import ReadTimeoutError
 
-from comets.influxdb.influxdb_env import INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG
-from comets.logs.logger import log
+from cpu_power_seer.influxdb.influxdb_env import INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG
+from cpu_power_seer.logs.logger import log
 
 warnings.simplefilter("ignore", MissingPivotFunction)
 

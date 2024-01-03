@@ -1,5 +1,5 @@
-from comets.logs.logger import log
-from comets.config import config
+from cpu_power_seer.logs.logger import log
+from cpu_power_seer.config import config
 
 
 def print_config():

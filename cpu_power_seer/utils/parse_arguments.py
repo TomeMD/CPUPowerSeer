@@ -1,5 +1,5 @@
-from comets.parser.my_parser import create_parser, check_config, update_config
-from comets.config.print import print_config
+from cpu_power_seer.parser.my_parser import create_parser, check_config, update_config
+from cpu_power_seer.config.print import print_config
 
 
 def run():

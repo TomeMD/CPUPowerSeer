@@ -2,14 +2,13 @@ import os
 import argparse
 from argparse import RawTextHelpFormatter
 
-from comets.logs.logger import log
-from comets.config import config
-from comets.influxdb.influxdb import check_bucket_exists
+from cpu_power_seer.logs.logger import log
+from cpu_power_seer.config import config
+from cpu_power_seer.influxdb.influxdb import check_bucket_exists
 
 
 def create_parser():
     parser = argparse.ArgumentParser(
-        prog="comets",
         description="CPU Power Modeling from Time Series.",
         formatter_class=RawTextHelpFormatter
     )

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='comets',
+    name='cpu_power_seer',
     version='0.1',
     description='CPU Power Modeling from Time Series.',
     author='Tomé Maseda',
@@ -18,7 +18,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'comets = comets.main:main',
+            'powerseer = cpu_power_seer.main:main',
         ],
     },
 )
