@@ -56,4 +56,3 @@ def write_performance(model_name, expected, predicted, write_common_file=False, 
         file.write("\n")
     if write_common_file:
         write_r2(r2, test_name)
-    log(f'Performance report and plots stored at {config.output_dir}')

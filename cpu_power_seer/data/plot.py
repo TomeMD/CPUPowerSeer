@@ -5,6 +5,10 @@ from matplotlib.lines import Line2D
 
 from cpu_power_seer.config import config
 
+# Use a non-interactive backend to avoid the requirement of being run from the main thread
+# Exception: main thread is not in main loop
+plt.switch_backend('agg')
+
 
 # It is assumed there's one key per value (config.py dicts)
 def get_key_from_value(dict, value):

@@ -4,7 +4,9 @@ import pandas as pd
 
 from cpu_power_seer.config import config
 from cpu_power_seer.logs.logger import log
-from cpu_power_seer.data.process import get_timestamp_from_line, get_time_series, get_formatted_vars
+from cpu_power_seer.data.process.timestamps import get_timestamp_from_line, get_threads_timestamps
+from cpu_power_seer.data.process.time_series import get_time_series, fix_time_units
+from cpu_power_seer.data.process.model_vars import get_formatted_vars
 from cpu_power_seer.data.plot import plot_time_series, plot_model, plot_results
 from cpu_power_seer.data.model.utils import write_performance
 
@@ -15,20 +17,11 @@ def get_test_name(file):
     return occurrences[-1]
 
 
-def get_threads_timestamps(file):
-    try:
-        with open(file, 'r') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        log(f"Error while parsing timestamps (file doesn't exists): {file}", "ERR")
-        return []
-    threads_timestamps = []
-    for i in range(0, len(lines), 2):
-        start_line = lines[i]
-        stop_line = lines[i+1]
-        threads = len(start_line.split(" ")[-4][:-1].split(","))
-        threads_timestamps.append((threads, start_line, stop_line))
-    return threads_timestamps
+def get_test_data(start_line, stop_line, initial_date):
+    test_timestamps = get_timestamp_from_line(start_line, stop_line, 0)
+    time_series = get_time_series(config.x_vars + ["power"], test_timestamps, initial_date=initial_date)
+    return time_series
+    # plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
 
 
 def set_test_output(test_name, threads):
@@ -37,15 +30,6 @@ def set_test_output(test_name, threads):
     config.img_dir = f'{config.test_results_dir}/img'
     os.makedirs(config.test_results_dir, exist_ok=True)
     os.makedirs(config.img_dir, exist_ok=True)
-    log(f"Test {test_name} output directory set to {config.test_results_dir}")
-
-
-def get_test_data(start_line, stop_line, initial_date):
-    test_timestamps = get_timestamp_from_line(start_line, stop_line, 0)
-    log("Getting model variables time series from corresponding period")
-    time_series = get_time_series(config.x_vars + ["power"], test_timestamps, config.test_range, initial_date=initial_date)
-    return time_series
-    # plot_time_series("Test Time Series", test_time_series, config.x_vars, f'{config.model_name}-test-data.png')
 
 
 def update_test_model_values(model, time_series):
@@ -81,16 +65,6 @@ def run_test(model, threads, test_name, time_series):
     save_model_results(model, threads, test_name, time_series)
 
 
-def fix_time_units(df, current, prev):
-    if current == "hours" and prev == "seconds":
-        df["time_diff"] = df["time_diff"] / 3600
-    else:
-        df["time_diff"] = df["time_diff"] / 60
-    df["time_unit"] = current
-    log(f"Test time series time units have been modified from {prev} to {current}", "WARN")
-    return df
-
-
 def run(model):
     if config.test_ts_files_list is not None:
         for file in config.test_ts_files_list:
@@ -101,7 +75,6 @@ def run(model):
             initial_date = None
             prev_time_unit = None
             for t in threads_timestamps:
-                log(f"Running test {test_name} with {t[0]} threads")
                 time_series_threads = get_test_data(t[1], t[2], initial_date)
                 current_time_unit = time_series_threads["time_unit"].iloc[0]
                 if first:
@@ -112,6 +85,8 @@ def run(model):
                     test_time_series = fix_time_units(test_time_series, current_time_unit, prev_time_unit)
                     prev_time_unit = current_time_unit
                 run_test(model, t[0], test_name, time_series_threads)
+                log(f"Model has been evaluated using {test_name} with {t[0]} threads."
+                    f" Results stored at {config.test_results_dir}")
                 test_time_series = pd.concat([test_time_series, time_series_threads], ignore_index=True)
             run_test(model, 0, test_name, test_time_series)
     else:

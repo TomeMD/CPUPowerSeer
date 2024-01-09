@@ -11,8 +11,6 @@ log_file = None
 model_name = None
 x_vars = None
 prediction_method = None
-train_range = 1.5
-test_range = 1.5
 
 supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "sumfreq", "temp"]
 supported_pred_methods = ["polynomial", "freqwointeractionterms", "perceptron", "custom"]
