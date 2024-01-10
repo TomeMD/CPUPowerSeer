@@ -27,13 +27,13 @@ def generate_monomials(X):
     return monomials
 
 
-def write_r2(r2, test_name):
-    results_file = f'{config.test_dir}/{config.model_name}-summary.out'
+def write_value(value_name, value, test_name):
+    results_file = f'{config.test_dir}/{value_name}-summary.out'
     with open(results_file, 'a') as file:
-        file.write(f"{test_name} R2: {r2}\n")
+        file.write(f"{test_name} {value_name}: {value}\n")
 
 
-def write_performance(model_name, expected, predicted, write_common_file=False, test_name=None, equation=None):
+def write_performance(model_name, expected, predicted, write_summary=False, test_name=None, equation=None):
     results_file = f'{config.test_results_dir}/{config.model_name}-results.out'
     max_err = max_error(expected, predicted)
     mae = mean_absolute_error(expected, predicted)
@@ -54,5 +54,6 @@ def write_performance(model_name, expected, predicted, write_common_file=False, 
         if equation is not None:
             file.write(f"{equation}")
         file.write("\n")
-    if write_common_file:
-        write_r2(r2, test_name)
+    if write_summary:
+        write_value("R2", r2, test_name)
+        write_value("MAPE", mape, test_name)

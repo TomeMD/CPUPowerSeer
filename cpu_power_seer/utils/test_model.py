@@ -7,7 +7,7 @@ from cpu_power_seer.logs.logger import log
 from cpu_power_seer.data.process.timestamps import get_timestamp_from_line, get_threads_timestamps
 from cpu_power_seer.data.process.time_series import get_time_series, fix_time_units
 from cpu_power_seer.data.process.model_vars import get_formatted_vars
-from cpu_power_seer.data.plot import plot_time_series, plot_model, plot_results
+from cpu_power_seer.data.plot.time_series import plot_time_series, plot_model, plot_results
 from cpu_power_seer.data.model.utils import write_performance
 
 
@@ -38,14 +38,13 @@ def update_test_model_values(model, time_series):
 
 
 def save_model_results(model, threads, test_name, test_time_series=None):
-
     expected = model.y_actual if model.y_actual is not None else model.y_test
     predicted = model.y_pred_actual if model.y_pred_actual is not None else model.y_pred
     plot_results(expected, predicted, f'{config.model_name}-results.png')
 
-    # If writing test results with all threads write also to common R2 file
+    # If writing test results with all threads write R2 and MAPE also to summary files
     write_performance(model.name, expected, predicted,
-                      equation=model.equation, write_common_file=(threads == 0), test_name=test_name)
+                      equation=model.equation, write_summary=(threads == 0), test_name=test_name)
 
     # If actual test data is provided plot predicted time series
     if test_time_series is not None:
