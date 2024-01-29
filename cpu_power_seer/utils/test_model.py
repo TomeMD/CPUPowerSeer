@@ -52,16 +52,17 @@ def save_model_results(model, threads, test_name, test_time_series=None):
         plot_time_series("Predicted Time Series", test_time_series,
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
 
-    # If model dimension is 2 it is represented as a polynomial function
-    if len(config.x_vars) == 1 and config.prediction_method != "perceptron":
-        plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
-
 
 def run_test(model, threads, test_name, time_series):
     set_test_output(test_name, threads)
     update_test_model_values(model, time_series)
     model.test()
     save_model_results(model, threads, test_name, time_series)
+    # If not specific threads benchmark execution
+    if threads == 0:
+        # If model dimension is 2 it is represented as a polynomial function
+        if len(config.x_vars) == 1 and config.prediction_method != "perceptron":
+            plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
 
 
 def run(model):

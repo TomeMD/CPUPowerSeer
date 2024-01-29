@@ -42,15 +42,19 @@ def plot_results(expected, predicted, filename):
 
 
 def plot_model(model, var, filename):
-    X_idx = model.X_test[:, 1].argsort()
+    X_not_squared_position = 0
+    if hasattr(model, 'poly_features') and model.poly_features is not None:
+        X_not_squared_position = 1
+
+    X_idx = model.X_test[:, X_not_squared_position].argsort()
+    X_test = model.X_test
     if hasattr(model, 'scaler') and model.scaler is not None:
-        X_test = model.scaler.inverse_transform(model.X_test)
-    else:
-        X_test = model.X_test
+        X_test = model.scaler.inverse_transform(X_test)
     X_sorted = X_test[X_idx]
     y_sorted = model.y_pred[X_idx].ravel()
+
     fig = plt.figure()
-    sns.lineplot(x=X_sorted[:, 1], y=y_sorted, ax=plt.gca(), color=config.x_var_color[var], label="Polynomial regression")
+    sns.lineplot(x=X_sorted[:, X_not_squared_position], y=y_sorted, ax=plt.gca(), color=config.x_var_color[var], label="Polynomial regression")
     set_basic_labels("Model Function", config.x_var_label[var], "Power Consumption (W)", plt.gca())
     plt.legend()
     save_plot(filename)
