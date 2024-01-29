@@ -1,7 +1,7 @@
 from cpu_power_seer.config import config
 from cpu_power_seer.data.process.time_series import get_idle_consumption
 from cpu_power_seer.data.process.model_vars import get_formatted_vars
-from cpu_power_seer.data.model import PolynomialModel, FreqWoInteractionTerms, PerceptronModel, CustomModel
+from cpu_power_seer.data.model import *
 
 
 def run(train_timestamps, time_series):
@@ -12,6 +12,8 @@ def run(train_timestamps, time_series):
         model = FreqWoInteractionTerms(config.model_name)
     elif config.prediction_method == "perceptron":
         model = PerceptronModel(config.model_name)
+    elif config.prediction_method == "svr":
+        model = SVRModel(config.model_name)
     elif config.prediction_method == "custom":
         model = CustomModel(config.model_name)
 

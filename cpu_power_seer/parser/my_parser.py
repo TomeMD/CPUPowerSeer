@@ -52,7 +52,8 @@ into train and test data.",
         help="Method used to predict CPU power consumption. By default is a polynomial regression. Supported methods:\n\
 \tpolynomial\t\t\tPolynomial Regression with specified variables\n\
 \tfreqwointeractionterms\t\tCustom Regression using user_load, system_load and freq or sumfreq\n\
-\tperceptron\t\t\tMultilayer Perceptron",
+\tperceptron\t\t\tMultilayer Perceptron\n\
+\tsvr\t\t\t\tSupport Vector Regression",
     )
 
     parser.add_argument(

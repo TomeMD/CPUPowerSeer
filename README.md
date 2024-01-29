@@ -64,7 +64,7 @@ CPU Power Modeling from Time Series.
 options:
   -h, --help            show this help message and exit
   -v, --verbose         Increase output verbosity
-  --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables.
+  --vars VARS           Comma-separated list of variables to use in the regression model. Commonly known as predictor variables. 
                         Supported values: user_load, system_load, wait_load, freq, sumfreq.
   -t TRAIN_TIMESTAMPS, --train-timestamps TRAIN_TIMESTAMPS
                         File storing time series timestamps from train data in proper format. Check README.md to see timestamps proper format.
@@ -76,6 +76,7 @@ options:
                                 polynomial                      Polynomial Regression with specified variables
                                 freqwointeractionterms          Custom Regression using user_load, system_load and freq or sumfreq
                                 perceptron                      Multilayer Perceptron
+                                svr                             Support Vector Regression
   -b BUCKET, --bucket BUCKET
                         InfluxDB Bucket to retrieve data from. By default is 'mybucket'.
   -o OUTPUT, --output OUTPUT
