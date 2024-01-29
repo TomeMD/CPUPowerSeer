@@ -53,7 +53,7 @@ def save_model_results(model, threads, test_name, test_time_series=None):
                          config.x_vars, f'{config.model_name}-predictions.png', show_predictions=True)
 
     # If model dimension is 2 it is represented as a polynomial function
-    if len(config.x_vars) == 1:
+    if len(config.x_vars) == 1 and config.prediction_method != "perceptron":
         plot_model(model, config.x_vars[0], f'{config.model_name}-function.png')
 
 

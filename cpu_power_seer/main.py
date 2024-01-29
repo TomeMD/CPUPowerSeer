@@ -36,7 +36,7 @@ def main():
     # Execution times
     log(f"TRAIN DATA GATHERING EXECUTION TIME: {end_gather - start_gather}")
     log(f"MODEL TRAINING EXECUTION TIME: {end_train - start_train}")
-    log(f"MODEL TESTING EXEUCTION TIME: {end_test - start_test}")
+    log(f"MODEL TESTING EXECUTION TIME: {end_test - start_test}")
     log(f"TOTAL CPU TIME: {end_cpu - start_cpu}")
     log(f"TOTAL EXECUTION TIME: {end - start}")
 

@@ -13,7 +13,7 @@ x_vars = None
 prediction_method = None
 
 supported_vars = ["load", "user_load", "system_load", "wait_load", "freq", "sumfreq", "temp"]
-supported_pred_methods = ["polynomial", "freqwointeractionterms", "perceptron", "custom"]
+supported_pred_methods = ["polynomial", "freqwointeractionterms", "perceptron", "svr", "custom"]
 
 x_var_label = {
     "load": "Utilization (%)",
@@ -31,7 +31,7 @@ x_var_color = {
     "load": "#2b83ba",
     "user_load": "#2b83ba",
     "system_load": "#5e3c99",
-    "wait_load": "#ffffbf",
+    "wait_load": "#f781bf",
     "freq": "#d7191c",
     "sumfreq": "#d7191c",
     "temp": "#f781bf",

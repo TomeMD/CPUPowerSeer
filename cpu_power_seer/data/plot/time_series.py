@@ -43,7 +43,11 @@ def plot_results(expected, predicted, filename):
 
 def plot_model(model, var, filename):
     X_idx = model.X_test[:, 1].argsort()
-    X_sorted = model.X_test[X_idx]
+    if hasattr(model, 'scaler') and model.scaler is not None:
+        X_test = model.scaler.inverse_transform(model.X_test)
+    else:
+        X_test = model.X_test
+    X_sorted = X_test[X_idx]
     y_sorted = model.y_pred[X_idx].ravel()
     fig = plt.figure()
     sns.lineplot(x=X_sorted[:, 1], y=y_sorted, ax=plt.gca(), color=config.x_var_color[var], label="Polynomial regression")
