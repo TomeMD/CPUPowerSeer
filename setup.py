@@ -8,6 +8,8 @@ setup(
     author_email='tome.maseda@udc.es',
     packages=find_packages(),
     install_requires=[
+        'joblib',
+        'urllib3',
         'influxdb-client',
         'pandas',
         'numpy',

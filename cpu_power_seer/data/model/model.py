@@ -1,3 +1,6 @@
+from joblib import dump
+
+
 class Model:
 
     def __init__(self, name):
@@ -30,3 +33,6 @@ class Model:
         self.predict_test_values()
         if self.X_actual is not None:
             self.predict_actual_values()
+
+    def save_model(self, path):
+        dump(self.model, path)

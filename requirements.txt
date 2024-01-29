@@ -1,3 +1,4 @@
+joblib
 urllib3
 influxdb-client
 pandas

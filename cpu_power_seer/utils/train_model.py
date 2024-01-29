@@ -25,4 +25,6 @@ def run(train_timestamps, time_series):
     model.train()
     model.set_equation(idle_consumption)
 
+    model.save_model(f"{config.train_dir}/{config.prediction_method}.joblib")
+
     return model
