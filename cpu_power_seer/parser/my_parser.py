@@ -59,8 +59,8 @@ into train and test data.",
     parser.add_argument(
         "-b",
         "--bucket",
-        default="mybucket",
-        help="InfluxDB Bucket to retrieve data from. By default is 'mybucket'.",
+        default="public",
+        help="InfluxDB Bucket to retrieve data from. By default is 'public'.",
     )
 
     parser.add_argument(

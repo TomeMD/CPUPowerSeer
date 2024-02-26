@@ -22,7 +22,7 @@ INFLUXDB_TOKEN = "your-token"
 INFLUXDB_ORG = "your-org"
 ```
 
-It is assumed that this server stores Glances and RAPL metrics in a proper format. 
+It is assumed that this server stores Glances and RAPL metrics in a proper format.
 
 *Note: To store this metrics properly see [**CPUPowerWatcher**](https://github.com/TomeMD/CPUPowerWatcher.git).*
 
@@ -78,7 +78,7 @@ options:
                                 perceptron                      Multilayer Perceptron
                                 svr                             Support Vector Regression
   -b BUCKET, --bucket BUCKET
-                        InfluxDB Bucket to retrieve data from. By default is 'mybucket'.
+                        InfluxDB Bucket to retrieve data from. By default is 'public'.
   -o OUTPUT, --output OUTPUT
                         Directory to save time series plots and results. By default is './out'.
   -n NAME, --name NAME  Name of the model. It is useful to generate models from different sets of experiments in an orderly manner. By default is 'General'
@@ -145,6 +145,6 @@ out
 		└─── <THREADS[n]>
 ```
 
-There will be one subdirectory in benchmark directory for each number of threads used with this benchmark. 
+There will be one subdirectory in benchmark directory for each number of threads used with this benchmark.
 
 ***Note: Don't forget to specify the cores in the timestamps file because CPUPowerSeer will infer the number of threads/cores used from these files.***
